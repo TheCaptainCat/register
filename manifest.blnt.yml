@@ -1,0 +1,4 @@
+name: Register
+desc: The easy wiki app
+module: register
+version: 0.0.1
