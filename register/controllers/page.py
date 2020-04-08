@@ -37,6 +37,14 @@ async def get_page(match, **_):
     return response.ok('OK', await page_service.get_one_by_article_language(article, language))
 
 
+@ns.route(r'/{lang}/{article:\d+}/content', method=Method.GET, access=AccessType.Required)
+async def get_page_content(match, **_):
+    language = await language_service.get_by_name(match['lang'])
+    article = await article_service.get(match['article'])
+    page = await page_service.get_one_by_article_language(article, language)
+    return response.ok('OK', await page_service.get_parsed_content(page))
+
+
 @ns.route(r'/{lang}/{article:\d+}/versions', method=Method.GET, access=AccessType.Required,
           returns=ns.route.returns('version', as_list=True))
 async def get_page_versions(match, **_):
@@ -55,5 +63,5 @@ async def get_page_version(match, **_):
     page = await page_service.get_one_by_article_language(article, language)
     versions = sorted(page.versions, key=lambda v: v.created_on)
     if version_index >= len(versions):
-        raise NotFoundError(f'page.version.not_found:{language.name}:{page.id}:{version_index}')
+        raise NotFoundError(f'page.version.not_found:lang,page,version:{language.name},{page.id},{version_index}')
     return response.ok('OK', versions[version_index])

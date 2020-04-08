@@ -19,7 +19,7 @@ class Parser:
         self.parse_blocks()
         self.document.merge()
         self.parse_text_lines(self.document.tree)
-        self.document.deep_print()
+        return self.document.tree
 
     def escape_chars(self):
         for i in range(len(self.block_cursor.lines)):

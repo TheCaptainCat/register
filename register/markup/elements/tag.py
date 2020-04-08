@@ -5,12 +5,19 @@ class Tag:
         if parent:
             parent.children.append(self)
         self.children = options.get('children', [])
-        self.symbol = options.get('symbol')
         self.classes = options.get('classes', [])
         self.attrs = options.get('attrs', {})
 
     def push(self, tag):
         self.children.append(tag)
+
+    def to_dict(self):
+        return {
+            'tag': self.tag,
+            'classes': self.classes,
+            'attrs': self.attrs,
+            'children': [c.to_dict() if isinstance(c, Tag) else c for c in self.children]
+        }
 
     def _str_attrs(self):
         attrs = ' '.join([f'{att}="{value}"' for att, value in self.attrs.items()])
