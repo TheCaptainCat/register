@@ -1,10 +1,14 @@
-from bolinette.routing import Namespace, AccessType
-from register.services import language_service
+from bolinette import blnt, types
+from bolinette.decorators import controller
 
-ns = Namespace('/language', language_service)
 
-ns.defaults.get_all(access=AccessType.Required)
-ns.defaults.get_one('complete', access=AccessType.Required)
-ns.defaults.create()
-ns.defaults.update(access=AccessType.Required, roles=['admin'])
-ns.defaults.delete(access=AccessType.Required, roles=['admin'])
+@controller('language')
+class LanguageController(blnt.Controller):
+    def default_routes(self):
+        return [
+            self.defaults.get_all(access=types.web.AccessToken.Required),
+            self.defaults.get_one('complete', access=types.web.AccessToken.Required),
+            self.defaults.create(access=types.web.AccessToken.Required, roles=['admin']),
+            self.defaults.update(access=types.web.AccessToken.Required, roles=['admin']),
+            self.defaults.delete(access=types.web.AccessToken.Required, roles=['admin'])
+        ]

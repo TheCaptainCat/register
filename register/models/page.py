@@ -1,49 +1,42 @@
-from bolinette import mapping, db
-from bolinette.models import Historized
-
-from register.models import Article, Language, Version
+from bolinette import blnt, types, core
+from bolinette.decorators import model, with_mixin, model_property
 
 
-class Page(db.defs.model, Historized):
-    __tablename__ = 'page'
+@model('page')
+@with_mixin('historized')
+class Page(blnt.Model):
+    id = types.defs.Column(types.db.Integer, primary_key=True)
+    name = types.defs.Column(types.db.String, nullable=False)
 
-    id = db.defs.column(db.types.integer, primary_key=True)
-    name = db.defs.column(db.types.string, nullable=False)
+    article_id = types.defs.Column(types.db.Integer, reference=types.defs.Reference('article', 'id'), nullable=False)
+    article = types.defs.Relationship('article', foreign_key=article_id, lazy=False)
 
-    article_id = db.defs.column(db.types.integer, db.types.foreign_key('article', 'id'), nullable=False)
-    article = db.defs.relationship(Article, foreign_keys=article_id, lazy=False)
+    language_id = types.defs.Column(types.db.Integer, reference=types.defs.Reference('language', 'id'), nullable=False)
+    language = types.defs.Relationship('language', foreign_key=language_id, lazy=False)
 
-    language_id = db.defs.column(db.types.integer, db.types.foreign_key('language', 'id'), nullable=False)
-    language = db.defs.relationship(Language, foreign_keys=language_id, lazy=False)
-
-    versions = db.defs.relationship(Version, backref=db.defs.backref('page', lazy=True))
-
-    @property
-    def last_version(self) -> Version:
+    @model_property
+    def last_version(self):
         versions = sorted(self.versions, key=lambda v: v.created_on, reverse=True)
         return versions[0]
 
-    @staticmethod
-    def payloads():
+    @classmethod
+    def payloads(cls):
         yield 'new', [
-            mapping.Field(db.types.string, key='name', required=True),
-            mapping.Field(db.types.string, key='content', required=True)
+            types.mapping.Column(cls.name, required=True),
+            types.mapping.Field(types.db.String, key='content', required=True)
         ]
         yield 'version', [
-            mapping.Field(db.types.string, key='content', required=True)
+            types.mapping.Field(types.db.String, key='content', required=True)
         ]
 
-    @staticmethod
-    def responses():
-        base = Historized.base_response()
+    @classmethod
+    def responses(cls):
+        base = core.cache.mixins.get('historized').response(cls)
         yield [
-            mapping.Field(db.types.string, key='name')
+            types.mapping.Column(cls.name)
         ] + base
         yield 'complete', [
-            mapping.Field(db.types.string, key='name'),
-            mapping.Field(db.types.integer, name='version_count', function=lambda page: len(page.versions)),
-            mapping.Definition('version', key='last_version')
+            types.mapping.Column(cls.name),
+            types.mapping.Field(types.db.Integer, name='version_count', function=lambda page: len(page.versions)),
+            types.mapping.Definition('version', key='last_version')
         ] + base
-
-
-mapping.register(Page)

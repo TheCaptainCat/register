@@ -1,23 +1,20 @@
-from bolinette import mapping, db
+from bolinette import types, blnt
+from bolinette.decorators import model
 
 
-class Language(db.defs.model):
-    __tablename__ = 'language'
+@model('language')
+class Language(blnt.Model):
+    id = types.defs.Column(types.db.Integer, primary_key=True)
+    name = types.defs.Column(types.db.String, nullable=False, unique=True)
 
-    id = db.defs.column(db.types.integer, primary_key=True)
-    name = db.defs.column(db.types.string, nullable=False, unique=True)
-
-    @staticmethod
-    def payloads():
+    @classmethod
+    def payloads(cls):
         yield [
-            mapping.Field(db.types.string, key='name', required=True)
+            types.mapping.Column(cls.name, required=True)
         ]
 
-    @staticmethod
-    def responses():
+    @classmethod
+    def responses(cls):
         yield [
-            mapping.Field(db.types.string, key='name')
+            types.mapping.Column(cls.name)
         ]
-
-
-mapping.register(Language)

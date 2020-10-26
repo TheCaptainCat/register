@@ -1,10 +1,8 @@
-from bolinette.services import HistorizedService
-from register.models import Article
+from bolinette import blnt, core
+from bolinette.decorators import service
 
 
-class ArticleService(HistorizedService):
-    def __init__(self):
-        super().__init__(Article)
-
-
-article_service = ArticleService()
+@service('article')
+class ArticleService(blnt.HistorizedService):
+    def __init__(self, context: 'core.BolinetteContext'):
+        super().__init__(context)

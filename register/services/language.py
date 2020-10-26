@@ -1,13 +1,11 @@
-from bolinette.services import BaseService
-from register.models import Language
+from bolinette import blnt, core
+from bolinette.decorators import service
 
 
-class LanguageService(BaseService):
-    def __init__(self):
-        super().__init__(Language)
+@service('language')
+class LanguageService(blnt.Service):
+    def __init__(self, context: 'core.BolinetteContext'):
+        super().__init__(context)
 
     async def get_by_name(self, name):
         return await self.get_first_by('name', name)
-
-
-language_service = LanguageService()

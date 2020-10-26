@@ -1,18 +1,15 @@
-from bolinette import mapping, db
-from bolinette.models import Historized
+from bolinette import blnt, types, core
+from bolinette.decorators import model, with_mixin
 
 
-class Article(db.defs.model, Historized):
-    __tablename__ = 'article'
+@model('article')
+@with_mixin('historized')
+class Article(blnt.Model):
+    id = types.defs.Column(types.db.Integer, primary_key=True)
 
-    id = db.defs.column(db.types.integer, primary_key=True)
-
-    @staticmethod
-    def responses():
-        base = Historized.base_response()
+    @classmethod
+    def responses(cls):
+        base = core.cache.mixins.get('historized').response(cls)
         yield [
-            mapping.Field(db.types.integer, key='id')
+            types.mapping.Column(cls.id)
         ] + base
-
-
-mapping.register(Article)

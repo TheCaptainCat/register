@@ -1,21 +1,20 @@
-from bolinette import mapping, db
-from bolinette.models import Historized
+from bolinette import blnt, types, core
+from bolinette.decorators import model, with_mixin
 
 
-class Version(db.defs.model, Historized):
-    __tablename__ = 'version'
+@model('version')
+@with_mixin('historized')
+class Version(blnt.Model):
+    id = types.defs.Column(types.db.Integer, primary_key=True)
+    content = types.defs.Column(types.db.String, nullable=False)
 
-    id = db.defs.column(db.types.integer, primary_key=True)
-    content = db.defs.column(db.types.string, nullable=False)
+    page_id = types.defs.Column(types.db.Integer, reference=types.defs.Reference('page', 'id'), nullable=False)
+    page = types.defs.Relationship('page', foreign_key=page_id,
+                                   backref=types.defs.Backref('versions', lazy=False), lazy=True)
 
-    page_id = db.defs.column(db.types.integer, db.types.foreign_key('page', 'id'), nullable=False)
-
-    @staticmethod
-    def responses():
-        base = Historized.base_response()
+    @classmethod
+    def responses(cls):
+        base = core.cache.mixins.get('historized').response(cls)
         yield [
-            mapping.Field(db.types.string, key='content')
+            types.mapping.Column(cls.content)
         ] + base
-
-
-mapping.register(Version)

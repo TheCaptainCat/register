@@ -1,21 +1,22 @@
-from bolinette import env, transaction, db
-from bolinette.services import role_service, user_service
-
-from register.services import language_service
+from bolinette import core
+from bolinette.decorators import seeder
 
 
-@db.engine.seeder
-async def role_seeder():
-    with transaction:
+@seeder
+async def role_seeder(context: 'core.BolinetteContext'):
+    role_service = context.service('role')
+    with core.Transaction(context):
         await role_service.create({'name': 'root'})
         await role_service.create({'name': 'admin'})
         await role_service.create({'name': 'creator'})
 
 
-@db.engine.seeder
-async def dev_user_seeder():
-    if env['PROFILE'] == 'development':
-        with transaction:
+@seeder
+async def dev_user_seeder(context: 'core.BolinetteContext'):
+    role_service = context.service('role')
+    user_service = context.service('user')
+    if context.env['PROFILE'] == 'development':
+        with core.Transaction(context):
             root = await role_service.get_by_name('root')
             admin = await role_service.get_by_name('admin')
             root_usr = await user_service.create({
@@ -41,9 +42,10 @@ async def dev_user_seeder():
                 user.roles.append(roles[(i + 1) % 3])
 
 
-@db.engine.seeder
-async def dev_register_seeder():
-    if env['PROFILE'] == 'development':
-        with transaction:
+@seeder
+async def dev_register_seeder(context: 'core.BolinetteContext'):
+    language_service = context.service('language')
+    if context.env['PROFILE'] == 'development':
+        with core.Transaction(context):
             await language_service.create({'name': 'fr'})
             await language_service.create({'name': 'en'})

@@ -1,10 +1,6 @@
-from bolinette.services import HistorizedService
-from register.models import Version
+from bolinette import blnt, core
 
 
-class VersionService(HistorizedService):
-    def __init__(self):
-        super().__init__(Version)
-
-
-version_service = VersionService()
+class VersionService(blnt.HistorizedService):
+    def __init__(self, context: 'core.BolinetteContext'):
+        super().__init__(context)
