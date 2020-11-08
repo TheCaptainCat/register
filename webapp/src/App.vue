@@ -1,55 +1,38 @@
 <template>
-  <div v-if="userState.loading">
+  <div v-if="userStore.loading">
     Loading
   </div>
+  <div v-else-if="!userStore.user">
+    <login />
+  </div>
   <div class="container" v-else>
-    <header>
-      <navigation />
-    </header>
-    <main>
-      <div v-if="userState.user">
-        <router-view />
-      </div>
-      <div v-else>
-        <login />
-      </div>
-    </main>
-    <footer>
-      <bottom />
-    </footer>
+    <main-part />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import Navigation from "@/components/Navigation.vue";
-import Bottom from "@/components/Bottom.vue";
-import useUserFunctions from "@/composition/user/functions";
+import useUser from "@/composition/user/functions";
 import userStore from "@/composition/user/store";
 import Login from "@/views/Login.vue";
+import MainPart from "@/views/Main.vue";
 
 export default defineComponent({
   name: "App",
   components: {
-    Bottom,
-    Navigation,
-    Login
+    Login,
+    MainPart
   },
   setup() {
-    const { getUserInfo } = useUserFunctions();
+    const { getUserInfo } = useUser();
+
     return {
-      userState: userStore.state,
+      userStore: userStore.state,
       getUserInfo
     };
   },
   async mounted() {
-    userStore.setState({ loading: true });
-    try {
-      const user = await this.getUserInfo();
-      userStore.setState({ user, loading: false });
-    } catch (e) {
-      userStore.setState({ user: undefined, loading: false });
-    }
+    await this.getUserInfo();
   }
 });
 </script>

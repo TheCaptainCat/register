@@ -12,6 +12,9 @@ class Version(blnt.Model):
     page = types.defs.Relationship('page', foreign_key=page_id,
                                    backref=types.defs.Backref('versions', lazy=False), lazy=True)
 
+    era_id = types.defs.Column(types.db.Integer, reference=types.defs.Reference('era', 'id'), nullable=False)
+    era = types.defs.Relationship('era', foreign_key=era_id, lazy=False)
+
     @classmethod
     def responses(cls):
         base = core.cache.mixins.get('historized').response(cls)

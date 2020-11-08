@@ -6,6 +6,7 @@ from bolinette.decorators import model
 class Language(blnt.Model):
     id = types.defs.Column(types.db.Integer, primary_key=True)
     name = types.defs.Column(types.db.String, nullable=False, unique=True)
+    default = types.defs.Column(types.db.Boolean, nullable=False, default=False)
 
     @classmethod
     def payloads(cls):
@@ -16,5 +17,6 @@ class Language(blnt.Model):
     @classmethod
     def responses(cls):
         yield [
-            types.mapping.Column(cls.name)
+            types.mapping.Column(cls.name),
+            types.mapping.Column(cls.default)
         ]

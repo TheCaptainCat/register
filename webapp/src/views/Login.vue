@@ -10,11 +10,18 @@
     </label>
     <button type="submit">Login</button>
   </form>
+  <div v-if="state.errors.length">
+    <ul>
+      <li v-for="error in state.errors" :key="error">
+        {{ error }}
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
-import useUserFunctions from "@/composition/user/functions";
+import useUser from "@/composition/user/functions";
 import { FetchError } from "@/core/requests";
 
 interface State {
@@ -26,7 +33,7 @@ interface State {
 export default defineComponent({
   name: "Login",
   setup() {
-    const { login } = useUserFunctions();
+    const { login } = useUser();
 
     const state = reactive<State>({
       username: "",

@@ -14,6 +14,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .footer {
-  border: green solid thin;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 </style>

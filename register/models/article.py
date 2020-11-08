@@ -12,4 +12,13 @@ class Article(blnt.Model):
         base = core.cache.mixins.get('historized').response(cls)
         yield [
             types.mapping.Column(cls.id)
+        ]
+        yield "from_page", [
+            types.mapping.Column(cls.id),
+            types.mapping.Field(types.db.String, name='languages',
+                                function=lambda a: [p.language.name for p in a.pages])
+        ]
+        yield "complete", [
+            types.mapping.Column(cls.id),
+            types.mapping.List(types.mapping.Definition('page'), key='pages')
         ] + base

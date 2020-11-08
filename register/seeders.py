@@ -19,6 +19,7 @@ async def dev_user_seeder(context: 'core.BolinetteContext'):
         with core.Transaction(context):
             root = await role_service.get_by_name('root')
             admin = await role_service.get_by_name('admin')
+            creator = await role_service.get_by_name('creator')
             root_usr = await user_service.create({
                 'username': 'root',
                 'password': 'root',
@@ -26,20 +27,7 @@ async def dev_user_seeder(context: 'core.BolinetteContext'):
             })
             root_usr.roles.append(root)
             root_usr.roles.append(admin)
-
-            dev0 = await role_service.create({'name': 'dev0'})
-            dev1 = await role_service.create({'name': 'dev1'})
-            dev2 = await role_service.create({'name': 'dev2'})
-            roles = [dev0, dev1, dev2]
-
-            for i in range(10):
-                user = await user_service.create({
-                    'username': f'user_{i}',
-                    'password': 'test',
-                    'email': f'user{i}@test.com'
-                })
-                user.roles.append(roles[i % 3])
-                user.roles.append(roles[(i + 1) % 3])
+            root_usr.roles.append(creator)
 
 
 @seeder
@@ -47,5 +35,5 @@ async def dev_register_seeder(context: 'core.BolinetteContext'):
     language_service = context.service('language')
     if context.env['PROFILE'] == 'development':
         with core.Transaction(context):
-            await language_service.create({'name': 'fr'})
+            await language_service.create({'name': 'fr', 'default': True})
             await language_service.create({'name': 'en'})

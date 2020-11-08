@@ -1,23 +1,25 @@
 from bolinette import blnt, types
-from bolinette.decorators import controller, get, post
+from bolinette.decorators import controller, get, post, patch
 from bolinette.exceptions import NotFoundError
+
+from register.services import PageService, LanguageService, ArticleService
 
 
 @controller('page')
 class PageController(blnt.Controller):
     @property
-    def language_service(self):
+    def language_service(self) -> LanguageService:
         return self.context.service('language')
 
     @property
-    def page_service(self):
+    def page_service(self) -> PageService:
         return self.context.service('page')
 
     @property
-    def article_service(self):
+    def article_service(self) -> ArticleService:
         return self.context.service('article')
 
-    @get('/{lang}', access=types.web.AccessToken.Required)
+    @get('/{lang}', access=types.web.AccessToken.Required, returns=('page', 'list', 'as_list'))
     async def get_by_language(self, match):
         lang = await self.language_service.get_by_name(match['lang'])
         return self.response.ok('OK', await self.page_service.get_by_language(lang))
@@ -25,7 +27,7 @@ class PageController(blnt.Controller):
     @post('/{lang}', access=types.web.AccessToken.Required, roles=['creator'],
           expects=('page', 'new'), returns=('page', 'complete'))
     @post(r'/{lang}/{article:\d+}', access=types.web.AccessToken.Required, roles=['creator'],
-          expects=('page', 'version'), returns=('page', 'complete'))
+          expects=('page', 'new'), returns=('page', 'complete'))
     async def create_page(self, payload, match, current_user):
         language = await self.language_service.get_by_name(match['lang'])
         article_id = match.get('article')
@@ -34,7 +36,7 @@ class PageController(blnt.Controller):
             article = await self.article_service.get(article_id)
         return self.response.created(
             'page.created', await self.page_service.add_version(
-                payload.get('name'), payload['content'], article, language, current_user
+                payload['name'], payload['content'], article, language, current_user
             )
         )
 
@@ -51,6 +53,19 @@ class PageController(blnt.Controller):
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
         return self.response.ok('OK', await self.page_service.get_parsed_content(page))
+
+    @patch(r'/{lang}/{article:\d+}', access=types.web.AccessToken.Required, roles=['creator'],
+           expects=('page', 'new', 'patch'), returns=('page', 'complete'))
+    async def update_page(self, match, payload, current_user):
+        language = await self.language_service.get_by_name(match['lang'])
+        article = await self.article_service.get(match['article'])
+        page = await self.page_service.get_one_by_article_language(article, language)
+        await self.page_service.add_version(page.name, payload.get('content'), article, language, current_user)
+        values = {}
+        if 'name' in payload:
+            values['name'] = payload['name']
+        updated = await self.page_service.patch(page, values, current_user=current_user)
+        return self.response.ok('page.updated', updated)
 
     @get(r'/{lang}/{article:\d+}/versions', access=types.web.AccessToken.Required,
          returns=('version', 'default', 'as_list'))

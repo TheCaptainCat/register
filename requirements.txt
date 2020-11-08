@@ -1,2 +1,2 @@
-bolinette==0.5.5
+bolinette==0.5.7
 SQLAlchemy==1.3.20

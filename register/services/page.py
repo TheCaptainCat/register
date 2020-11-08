@@ -18,8 +18,8 @@ class PageService(blnt.HistorizedService):
         return await self.get_by('article_id', article.id)
 
     async def get_one_by_article_language(self, article, language):
-        article_table = self.context.table('article')
-        criteria = sqlalchemy.and_(article_table.article_id == article.id, article_table.language_id == language.id)
+        page_table = self.context.table('page')
+        criteria = sqlalchemy.and_(page_table.article_id == article.id, page_table.language_id == language.id)
         pages = await self.repo.get_by_criteria(criteria) or []
         if not len(pages):
             raise NotFoundError(f'page.not_found:lang,article:{language.name},{article.id}')
@@ -33,7 +33,9 @@ class PageService(blnt.HistorizedService):
         except NotFoundError:
             page = await self.create({'name': name, 'article': article, 'language': language},
                                      current_user=current_user)
-        await self.context.service('version').create({'content': content, 'page': page}, current_user=current_user)
+        if content:
+            await self.context.service('version').create({'content': content, 'page': page},
+                                                         current_user=current_user)
         return page
 
     async def get_parsed_content(self, page):

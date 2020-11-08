@@ -2,7 +2,7 @@ from bolinette import blnt, types
 from bolinette.decorators import controller
 
 
-@controller('language')
+@controller('language', '/lang')
 class LanguageController(blnt.Controller):
     def default_routes(self):
         return [
