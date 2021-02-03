@@ -1,15 +1,13 @@
 <template>
   <h1>{{ language }}</h1>
-  <section v-if="pageListState.loading">
-    Loading articles...
-  </section>
+  <section v-if="pageListState.loading">Loading articles...</section>
   <section v-else>
     <ul>
       <li v-for="page in pageListState.pages" :key="page.name">
         <router-link
           :to="{
             name: 'Article',
-            params: { language: page.language, id: page.article }
+            params: { language: page.language, id: page.article },
           }"
         >
           {{ page.name }}
@@ -22,28 +20,30 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import usePage from "@/composition/page/functions";
+import {
+  newPageListState,
+  getPagesByLanguage,
+} from "@/composition/page/functions";
 
 export default defineComponent({
   name: "LanguageHome",
   props: {
     language: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup() {
-    const { newPageListState, getPagesByLanguage } = usePage();
     const pageListState = newPageListState(true);
 
     return {
       pageListState,
-      getPagesByLanguage
+      getPagesByLanguage,
     };
   },
   async mounted() {
     await this.getPagesByLanguage(this.pageListState, this.language);
-  }
+  },
 });
 </script>
 

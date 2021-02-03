@@ -13,21 +13,25 @@ export interface PageListState {
   loading: boolean;
 }
 
-function newPageState(loading: boolean) {
+const newPageState = (loading: boolean): PageState => {
   return reactive<PageState>({
     page: undefined,
-    loading
+    loading,
   });
-}
+};
 
-function newPageListState(loading: boolean) {
+const newPageListState = (loading: boolean): PageListState => {
   return reactive<PageListState>({
     pages: [],
-    loading
+    loading,
   });
-}
+};
 
-async function getPage(state: PageState, articleId: number, language: string) {
+const getPage = async (
+  state: PageState,
+  articleId: number,
+  language: string
+): Promise<void> => {
   state.loading = true;
   const request = new ApiRequest(
     HttpMethod.get,
@@ -36,48 +40,52 @@ async function getPage(state: PageState, articleId: number, language: string) {
   const response = await request.fetch<Page>();
   state.page = response.data;
   state.loading = false;
-}
+};
 
-async function getPagesByLanguage(state: PageListState, language: string) {
+const getPagesByLanguage = async (
+  state: PageListState,
+  language: string
+): Promise<void> => {
   state.loading = true;
   const request = new ApiRequest(HttpMethod.get, `/page/${language}`);
   const response = await request.fetch<PartialPage[]>();
   state.pages = response.data;
   state.loading = false;
-}
+};
 
-async function addVersion(
+const addVersion = async (
   state: PageState,
   articleId: number,
   language: string,
   content: string
-) {
+): Promise<void> => {
   const request = new ApiRequest(
     HttpMethod.patch,
     `/page/${language}/${articleId}`,
     {
-      content
+      content,
     }
   );
   const response = await request.fetch<Page>();
   state.page = response.data;
-}
+};
 
-async function fetchContent(articleId: number, language: string) {
+const fetchContent = async (
+  articleId: number,
+  language: string
+): Promise<void> => {
   const request = new ApiRequest(
     HttpMethod.get,
     `/page/${language}/${articleId}/content`
   );
   await request.fetch();
-}
+};
 
-export default function usePage() {
-  return {
-    newPageState,
-    newPageListState,
-    getPage,
-    getPagesByLanguage,
-    addVersion,
-    fetchContent
-  };
-}
+export {
+  newPageState,
+  newPageListState,
+  getPage,
+  getPagesByLanguage,
+  addVersion,
+  fetchContent,
+};

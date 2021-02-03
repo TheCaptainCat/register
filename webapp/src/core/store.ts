@@ -14,7 +14,7 @@ export abstract class Store<T extends object> {
     return readonly(this._state) as T;
   }
 
-  public setState(values: Partial<T>) {
+  public setState(values: Partial<T>): void {
     const fields = values as T;
     for (const key in fields) {
       if (this._state[key] !== fields[key]) this._state[key] = fields[key];

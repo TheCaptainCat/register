@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
-import useUser from "@/composition/user/functions";
+import { login } from "@/composition/user/functions";
 import { FetchError } from "@/core/requests";
 
 interface State {
@@ -33,14 +33,13 @@ interface State {
 export default defineComponent({
   name: "Login",
   setup() {
-    const { login } = useUser();
-
     const state = reactive<State>({
       username: "",
       password: "",
-      errors: []
+      errors: [],
     });
-    const loginFunc = async function() {
+
+    const loginFunc = async function () {
       try {
         await login(state.username, state.password);
       } catch (e) {
@@ -50,9 +49,9 @@ export default defineComponent({
 
     return {
       state,
-      login: loginFunc
+      login: loginFunc,
     };
-  }
+  },
 });
 </script>
 

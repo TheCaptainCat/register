@@ -5,5 +5,5 @@ export default interface Role {
 export const AppRoles: Record<string, Role> = {
   root: { name: "root" },
   admin: { name: "admin" },
-  creator: { name: "creator" }
+  creator: { name: "creator" },
 };

@@ -7,14 +7,17 @@ const articleRoutes: Array<RouteRecordRaw> = [
     path: "/:language",
     name: "LanguageHome",
     component: LanguageHome,
-    props: route => ({ language: route.params.language })
+    props: (route) => ({ language: route.params.language }),
   },
   {
     path: "/:language/:id",
     name: "Article",
     component: Article,
-    props: route => ({ language: route.params.language, id: route.params.id })
-  }
+    props: (route) => ({
+      language: route.params.language,
+      id: route.params.id,
+    }),
+  },
 ];
 
 export default articleRoutes;

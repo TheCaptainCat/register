@@ -1,9 +1,7 @@
 <template>
   <div v-if="!state.edit">
     <button @click="state.edit = true">Edit page</button>
-    <div v-if="!version">
-      This article is empty
-    </div>
+    <div v-if="!version">This article is empty</div>
     <section v-else>
       {{ version.content }}
     </section>
@@ -36,17 +34,17 @@ export default defineComponent({
   name: "ArticleContent",
   props: {
     version: {
-      type: Object as PropType<Version>
-    }
+      type: Object as PropType<Version>,
+    },
   },
   setup(props) {
     const state = reactive<ArticleContentState>({
       edit: false,
-      content: (props.version && props.version.content) || ""
+      content: (props.version && props.version.content) || "",
     });
 
     return {
-      state
+      state,
     };
   },
   methods: {
@@ -58,8 +56,8 @@ export default defineComponent({
     save() {
       this.$emit("add-version", this.state.content);
       this.state.edit = false;
-    }
-  }
+    },
+  },
 });
 </script>
 

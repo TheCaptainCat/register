@@ -8,31 +8,28 @@ export interface LanguageState {
   loading: boolean;
 }
 
-function newLanguageState() {
+const newLanguageState = (): LanguageState => {
   return reactive<LanguageState>({
     languages: [],
-    loading: false
+    loading: false,
   });
-}
+};
 
-async function getLanguages(state: LanguageState) {
+const getLanguages = async (state: LanguageState): Promise<void> => {
   state.loading = true;
   const request = new ApiRequest(HttpMethod.get, "/lang");
   const response = await request.fetch<Language[]>();
   state.languages = response.data;
   state.loading = false;
-}
+};
 
-async function createLanguage(state: LanguageState, name: string) {
+const createLanguage = async (
+  state: LanguageState,
+  name: string
+): Promise<void> => {
   const request = new ApiRequest(HttpMethod.post, "/lang", { name });
   const response = await request.fetch<Language>();
   state.languages.push(response.data);
-}
+};
 
-export default function useLanguage() {
-  return {
-    newLanguageState,
-    getLanguages,
-    createLanguage
-  };
-}
+export { newLanguageState, getLanguages, createLanguage };

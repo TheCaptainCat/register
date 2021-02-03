@@ -10,7 +10,7 @@ class UserStore extends Store<UserState> {
   public data(): UserState {
     return {
       user: undefined,
-      loading: false
+      loading: false,
     };
   }
 }

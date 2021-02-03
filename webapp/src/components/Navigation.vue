@@ -16,15 +16,13 @@
 <script lang="ts">
 import { defineComponent, computed } from "vue";
 import userStore from "@/composition/user/store";
-import useUser from "@/composition/user/functions";
-import useRole from "@/composition/role/functions";
+import { logout } from "@/composition/user/functions";
+import { checkPermissions } from "@/composition/role/functions";
 import { AppRoles } from "@/composition/role/model";
 
 export default defineComponent({
   name: "Navigation",
   setup() {
-    const { logout } = useUser();
-    const { checkPermissions } = useRole();
     const userState = userStore.state;
     const isAdmin = computed(
       () =>
@@ -34,9 +32,9 @@ export default defineComponent({
     return {
       userStore: userStore.state,
       logout,
-      isAdmin
+      isAdmin,
     };
-  }
+  },
 });
 </script>
 

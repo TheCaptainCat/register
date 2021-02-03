@@ -10,7 +10,7 @@ export enum HttpMethod {
   post = "POST",
   put = "PUT",
   patch = "PATCH",
-  delete = "DELETE"
+  delete = "DELETE",
 }
 
 export class FetchError<T> extends Error {
@@ -49,7 +49,7 @@ export default class FetchRequest<T> {
   public async fetch<R>(): Promise<FetchResponse<R>> {
     let body: string | FormData | undefined;
     const headers = new Headers({
-      Accept: "application/json"
+      Accept: "application/json",
     });
     if (this.body !== undefined) {
       if (this.body instanceof File) {
@@ -65,7 +65,7 @@ export default class FetchRequest<T> {
       credentials: "include",
       headers: headers,
       method: this.method,
-      mode: "cors"
+      mode: "cors",
     };
     const fetchResponse = await fetch(
       new Request(this.domain + this.path, init),

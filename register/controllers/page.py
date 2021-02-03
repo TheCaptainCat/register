@@ -22,7 +22,7 @@ class PageController(web.Controller):
     @get('/{lang}', returns=web.Returns('page', 'list', as_list=True))
     async def get_by_language(self, match):
         lang = await self.language_service.get_by_name(match['lang'])
-        return self.response.ok('OK', await self.page_service.get_by_language(lang))
+        return self.response.ok(data=await self.page_service.get_by_language(lang))
 
     @post('/{lang}', middlewares=['auth|roles=creator'],
           expects=web.Expects('page', 'new'), returns=web.Returns('page', 'complete'))
@@ -35,24 +35,22 @@ class PageController(web.Controller):
         if article_id:
             article = await self.article_service.get(article_id)
         return self.response.created(
-            'page.created', await self.page_service.add_version(
-                payload['name'], payload['content'], article, language, current_user
-            )
-        )
+            messages='page.created', data=await self.page_service.add_version(
+                payload['name'], payload['content'], article, language, current_user))
 
     @get(r'/{lang}/{article:\d+}', middlewares=['auth'],
          returns=web.Returns('page', 'complete'))
     async def get_page(self, match):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
-        return self.response.ok('OK', await self.page_service.get_one_by_article_language(article, language))
+        return self.response.ok(data=await self.page_service.get_one_by_article_language(article, language))
 
     @get(r'/{lang}/{article:\d+}/content', middlewares=['auth'])
     async def get_page_content(self, match):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
-        return self.response.ok('OK', await self.page_service.get_parsed_content(page))
+        return self.response.ok(data=await self.page_service.get_parsed_content(page))
 
     @patch(r'/{lang}/{article:\d+}', middlewares=['auth|roles=creator'],
            expects=web.Expects('page', 'new', patch=True), returns=web.Returns('page', 'complete'))
@@ -65,7 +63,7 @@ class PageController(web.Controller):
         if 'name' in payload:
             values['name'] = payload['name']
         updated = await self.page_service.patch(page, values, current_user=current_user)
-        return self.response.ok('page.updated', updated)
+        return self.response.ok(messages='page.updated', data=updated)
 
     @get(r'/{lang}/{article:\d+}/versions', middlewares=['auth'],
          returns=web.Returns('version', 'default', as_list=True))
@@ -73,7 +71,7 @@ class PageController(web.Controller):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
-        return self.response.ok('OK', sorted(page.versions, key=lambda v: v.created_on))
+        return self.response.ok(messages=sorted(page.versions, key=lambda v: v.created_on))
 
     @get(r'/{lang}/{article:\d+}/versions/{version:\d+}', middlewares=['auth'],
          returns=web.Returns('version'))
@@ -85,4 +83,4 @@ class PageController(web.Controller):
         versions = sorted(page.versions, key=lambda v: v.created_on)
         if version_index >= len(versions):
             raise NotFoundError(f'page.version.not_found:lang,page,version:{language.name},{page.id},{version_index}')
-        return self.response.ok('OK', versions[version_index])
+        return self.response.ok(data=versions[version_index])

@@ -1,7 +1,5 @@
 <template>
-  <div v-if="userStore.loading">
-    Loading
-  </div>
+  <div v-if="userStore.loading">Loading</div>
   <div v-else-if="!userStore.user">
     <login />
   </div>
@@ -12,7 +10,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import useUser from "@/composition/user/functions";
+import { getUserInfo } from "@/composition/user/functions";
 import userStore from "@/composition/user/store";
 import Login from "@/views/Login.vue";
 import MainPart from "@/views/Main.vue";
@@ -21,19 +19,17 @@ export default defineComponent({
   name: "App",
   components: {
     Login,
-    MainPart
+    MainPart,
   },
   setup() {
-    const { getUserInfo } = useUser();
-
     return {
       userStore: userStore.state,
-      getUserInfo
+      getUserInfo,
     };
   },
   async mounted() {
     await this.getUserInfo();
-  }
+  },
 });
 </script>
 

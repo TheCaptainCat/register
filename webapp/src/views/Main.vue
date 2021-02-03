@@ -19,15 +19,15 @@ export default defineComponent({
   name: "Main",
   components: {
     Bottom,
-    Navigation
+    Navigation,
   },
   setup() {
     const state = reactive({});
 
     return {
-      state
+      state,
     };
-  }
+  },
 });
 </script>
 

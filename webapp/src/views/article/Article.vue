@@ -1,7 +1,5 @@
 <template>
-  <article v-if="pageState.loading">
-    Loading article...
-  </article>
+  <article v-if="pageState.loading">Loading article...</article>
   <article v-else>
     <h1>{{ pageState.page.name }}</h1>
     <p>
@@ -23,30 +21,33 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
-import usePage from "@/composition/page/functions";
+import {
+  newPageState,
+  getPage,
+  addVersion,
+  fetchContent,
+} from "@/composition/page/functions";
 import ArticleContent from "@/views/article/Content.vue";
 
 export default defineComponent({
   name: "Article",
   components: {
-    ArticleContent
+    ArticleContent,
   },
   props: {
     language: {
       type: String,
-      required: true
+      required: true,
     },
     id: {
       type: String,
-      required: true
-    }
+      required: true,
+    },
   },
   setup(props) {
     const state = reactive({});
-    const { newPageState, getPage, addVersion, fetchContent } = usePage();
     const pageState = newPageState(true);
     const articleId = parseInt(props.id);
-
     return {
       state,
       articleId,
@@ -54,12 +55,12 @@ export default defineComponent({
       getPage,
       addVersion: async (content: string) =>
         await addVersion(pageState, articleId, props.language, content),
-      fetchContent: async () => await fetchContent(articleId, props.language)
+      fetchContent: async () => await fetchContent(articleId, props.language),
     };
   },
   async mounted() {
     await this.getPage(this.pageState, this.articleId, this.language);
-  }
+  },
 });
 </script>
 

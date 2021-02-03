@@ -5,7 +5,7 @@ import Language from "../language/model";
 export default interface Page {
   name: string;
   article: Article;
-  language: Language
+  language: Language;
   created_by: User;
   created_on: Date;
   updated_by: User;

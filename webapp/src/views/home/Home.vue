@@ -1,12 +1,8 @@
 <template>
   <h1>Welcome to the Register!</h1>
   <p>Select a community:</p>
-  <div v-if="languageState.loading">
-    Loading languages, please wait...
-  </div>
-  <div v-else-if="!languageState.languages.length">
-    No communities found!
-  </div>
+  <div v-if="languageState.loading">Loading languages, please wait...</div>
+  <div v-else-if="!languageState.languages.length">No communities found!</div>
   <ul v-else>
     <li v-for="language in languageState.languages" :key="language.name">
       <router-link
@@ -20,24 +16,26 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
-import useLanguage from "@/composition/language/functions";
+import {
+  newLanguageState,
+  getLanguages,
+} from "@/composition/language/functions";
 
 export default defineComponent({
   name: "Home",
   setup() {
     const state = reactive({});
-    const { newLanguageState, getLanguages } = useLanguage();
     const languageState = newLanguageState();
 
     return {
       state,
       languageState,
-      getLanguages
+      getLanguages,
     };
   },
   async mounted() {
     await this.getLanguages(this.languageState);
-  }
+  },
 });
 </script>
 

@@ -7,24 +7,24 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/",
     name: "Home",
-    component: Home
+    component: Home,
   },
   {
     path: "/admin",
     name: "Admin",
-    component: Admin
+    component: Admin,
   },
   {
     path: "/about",
     name: "About",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue")
-  }
+      import(/* webpackChunkName: "about" */ "../views/About.vue"),
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
-  routes
+  routes,
 });
 
 function addRoutes(routes: RouteRecordRaw[]) {
