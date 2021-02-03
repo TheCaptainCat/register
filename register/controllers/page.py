@@ -1,4 +1,4 @@
-from bolinette import blnt, types
+from bolinette import web
 from bolinette.decorators import controller, get, post, patch
 from bolinette.exceptions import NotFoundError
 
@@ -6,7 +6,7 @@ from register.services import PageService, LanguageService, ArticleService
 
 
 @controller('page')
-class PageController(blnt.Controller):
+class PageController(web.Controller):
     @property
     def language_service(self) -> LanguageService:
         return self.context.service('language')
@@ -19,15 +19,15 @@ class PageController(blnt.Controller):
     def article_service(self) -> ArticleService:
         return self.context.service('article')
 
-    @get('/{lang}', access=types.web.AccessToken.Required, returns=('page', 'list', 'as_list'))
+    @get('/{lang}', returns=web.Returns('page', 'list', as_list=True))
     async def get_by_language(self, match):
         lang = await self.language_service.get_by_name(match['lang'])
         return self.response.ok('OK', await self.page_service.get_by_language(lang))
 
-    @post('/{lang}', access=types.web.AccessToken.Required, roles=['creator'],
-          expects=('page', 'new'), returns=('page', 'complete'))
-    @post(r'/{lang}/{article:\d+}', access=types.web.AccessToken.Required, roles=['creator'],
-          expects=('page', 'new'), returns=('page', 'complete'))
+    @post('/{lang}', middlewares=['auth|roles=creator'],
+          expects=web.Expects('page', 'new'), returns=web.Returns('page', 'complete'))
+    @post(r'/{lang}/{article:\d+}', middlewares=['auth|roles=creator'],
+          expects=web.Expects('page', 'new'), returns=web.Returns('page', 'complete'))
     async def create_page(self, payload, match, current_user):
         language = await self.language_service.get_by_name(match['lang'])
         article_id = match.get('article')
@@ -40,22 +40,22 @@ class PageController(blnt.Controller):
             )
         )
 
-    @get(r'/{lang}/{article:\d+}', access=types.web.AccessToken.Required,
-         returns=('page', 'complete'))
+    @get(r'/{lang}/{article:\d+}', middlewares=['auth'],
+         returns=web.Returns('page', 'complete'))
     async def get_page(self, match):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         return self.response.ok('OK', await self.page_service.get_one_by_article_language(article, language))
 
-    @get(r'/{lang}/{article:\d+}/content', access=types.web.AccessToken.Required)
+    @get(r'/{lang}/{article:\d+}/content', middlewares=['auth'])
     async def get_page_content(self, match):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
         return self.response.ok('OK', await self.page_service.get_parsed_content(page))
 
-    @patch(r'/{lang}/{article:\d+}', access=types.web.AccessToken.Required, roles=['creator'],
-           expects=('page', 'new', 'patch'), returns=('page', 'complete'))
+    @patch(r'/{lang}/{article:\d+}', middlewares=['auth|roles=creator'],
+           expects=web.Expects('page', 'new', patch=True), returns=web.Returns('page', 'complete'))
     async def update_page(self, match, payload, current_user):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
@@ -67,16 +67,16 @@ class PageController(blnt.Controller):
         updated = await self.page_service.patch(page, values, current_user=current_user)
         return self.response.ok('page.updated', updated)
 
-    @get(r'/{lang}/{article:\d+}/versions', access=types.web.AccessToken.Required,
-         returns=('version', 'default', 'as_list'))
+    @get(r'/{lang}/{article:\d+}/versions', middlewares=['auth'],
+         returns=web.Returns('version', 'default', as_list=True))
     async def get_page_versions(self, match):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
         return self.response.ok('OK', sorted(page.versions, key=lambda v: v.created_on))
 
-    @get(r'/{lang}/{article:\d+}/versions/{version:\d+}', access=types.web.AccessToken.Required,
-         returns='version')
+    @get(r'/{lang}/{article:\d+}/versions/{version:\d+}', middlewares=['auth'],
+         returns=web.Returns('version'))
     async def get_page_version(self, match):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])

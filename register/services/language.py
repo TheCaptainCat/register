@@ -3,8 +3,8 @@ from bolinette.decorators import service
 
 
 @service('language')
-class LanguageService(blnt.Service):
-    def __init__(self, context: 'core.BolinetteContext'):
+class LanguageService(core.Service):
+    def __init__(self, context: 'blnt.BolinetteContext'):
         super().__init__(context)
 
     async def get_by_name(self, name):

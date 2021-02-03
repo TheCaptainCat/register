@@ -1,11 +1,11 @@
-from bolinette import blnt, types, core
+from bolinette import types, core, mapping
 from bolinette.decorators import model, with_mixin, model_property
 
 
 @model('page')
 @with_mixin('historized')
-class Page(blnt.Model):
-    id = types.defs.Column(types.db.Integer, primary_key=True)
+class Page(core.Model):
+    id = types.defs.Column(types.db.Integer, primary_key=True, model_id=True)
     name = types.defs.Column(types.db.String, nullable=False)
 
     article_id = types.defs.Column(types.db.Integer, reference=types.defs.Reference('article', 'id'), nullable=False)
@@ -26,24 +26,24 @@ class Page(blnt.Model):
     @classmethod
     def payloads(cls):
         yield 'new', [
-            types.mapping.Column(cls.name, required=True),
-            types.mapping.Field(types.db.String, key='content')
+            mapping.Column(cls.name, required=True),
+            mapping.Field(types.db.String, key='content')
         ]
 
     @classmethod
     def responses(cls):
-        base = core.cache.mixins.get('historized').response(cls)
+        base = cls.get_mixin('historized').response(cls)
         yield [
-            types.mapping.Column(cls.name)
+            mapping.Column(cls.name)
         ]
         yield "list", [
-            types.mapping.Column(cls.name),
-            types.mapping.Field(types.db.String, name='language', function=lambda x: x.language.name),
-            types.mapping.Field(types.db.Integer, name='article', function=lambda x: x.article.id)
+            mapping.Column(cls.name),
+            mapping.Field(types.db.String, name='language', function=lambda x: x.language.name),
+            mapping.Field(types.db.Integer, name='article', function=lambda x: x.article.id)
         ]
         yield 'complete', [
-            types.mapping.Column(cls.name),
-            types.mapping.Field(types.db.Integer, name='version_count', function=lambda page: len(page.versions)),
-            types.mapping.Definition('version', key='last_version'),
-            types.mapping.Definition('article', 'from_page', key='article')
+            mapping.Column(cls.name),
+            mapping.Field(types.db.Integer, name='version_count', function=lambda page: len(page.versions)),
+            mapping.Definition('version', key='last_version'),
+            mapping.Definition('article', 'from_page', key='article')
         ] + base

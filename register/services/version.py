@@ -3,6 +3,6 @@ from bolinette.decorators import service
 
 
 @service('version')
-class VersionService(blnt.HistorizedService):
-    def __init__(self, context: 'core.BolinetteContext'):
+class VersionService(core.HistorizedService):
+    def __init__(self, context: 'blnt.BolinetteContext'):
         super().__init__(context)

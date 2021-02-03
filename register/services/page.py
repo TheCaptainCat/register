@@ -1,14 +1,13 @@
 from bolinette import blnt, core
 from bolinette.decorators import service
 from bolinette.exceptions import NotFoundError
-import sqlalchemy
 
 from register.markup import Parser
 
 
 @service('page')
-class PageService(blnt.HistorizedService):
-    def __init__(self, context: 'core.BolinetteContext'):
+class PageService(core.HistorizedService):
+    def __init__(self, context: 'blnt.BolinetteContext'):
         super().__init__(context)
 
     async def get_by_language(self, language):
@@ -18,9 +17,7 @@ class PageService(blnt.HistorizedService):
         return await self.get_by('article_id', article.id)
 
     async def get_one_by_article_language(self, article, language):
-        page_table = self.context.table('page')
-        criteria = sqlalchemy.and_(page_table.article_id == article.id, page_table.language_id == language.id)
-        pages = await self.repo.get_by_criteria(criteria) or []
+        pages = await self.repo.query().filter(lambda p: p.article_id == article.id and p.language_id == language.id)
         if not len(pages):
             raise NotFoundError(f'page.not_found:lang,article:{language.name},{article.id}')
         return pages[0]
