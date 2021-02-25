@@ -14,10 +14,14 @@
 </template>
 
 <script lang="ts">
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { defineComponent, reactive } from "vue";
 
 export default defineComponent({
-  name: "Button",
+  name: "RegButton",
+  components: {
+    FaIcon: FontAwesomeIcon,
+  },
   props: {
     size: {
       type: String,

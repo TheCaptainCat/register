@@ -14,9 +14,15 @@
 
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
+import { RegCard } from "@/components/containers";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export default defineComponent({
   name: "Error",
+  components: {
+    FaIcon: FontAwesomeIcon,
+    RegCard,
+  },
   setup() {
     const state = reactive({});
 

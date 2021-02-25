@@ -2,6 +2,7 @@
   <div class="reg-input-container">
     <label class="reg-input">
       <input
+        :name="name"
         :class="hasValue ? ['has-value'] : []"
         :type="type"
         v-model="val"
@@ -9,7 +10,7 @@
       <span v-if="label">{{ label }}</span>
     </label>
     <div v-if="error" class="error">
-      {{ $t("components.input.errors." + error) }}
+      {{ error }}
     </div>
   </div>
 </template>
@@ -18,21 +19,24 @@
 import { defineComponent, ref, watch, computed } from "vue";
 
 export default defineComponent({
-  name: "Input",
+  name: "RegInput",
   props: {
     type: {
       type: String,
       default: "text",
     },
-    modelValue: {
+    name: {
       type: String,
       required: true,
+    },
+    modelValue: {
+      type: String,
     },
     label: String,
     error: String,
   },
   setup(props, context) {
-    const val = ref("");
+    const val = ref<string | undefined>("");
     const hasValue = computed(() => val.value !== "");
     watch(val, () => {
       context.emit("update:modelValue", val.value);

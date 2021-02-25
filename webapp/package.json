@@ -13,8 +13,10 @@
     "@fortawesome/vue-fontawesome": "^3.0.0-3",
     "core-js": "^3.8.3",
     "register-service-worker": "^1.7.2",
+    "vee-validate": "^4.2.0",
     "vue": "^3.0.5",
-    "vue-router": "^4.0.3"
+    "vue-router": "^4.0.3",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.14.2",

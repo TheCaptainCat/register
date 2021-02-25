@@ -15,13 +15,18 @@
 </template>
 
 <script lang="ts">
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { defineComponent, reactive } from "vue";
+import { RegCard } from "@/components/containers";
 
 export default defineComponent({
   name: "Loading",
+  components: {
+    FaIcon: FontAwesomeIcon,
+    RegCard,
+  },
   setup() {
     const state = reactive({});
-
     return {
       state,
     };

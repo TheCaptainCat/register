@@ -8,7 +8,7 @@
 import { defineComponent } from "vue";
 
 export default defineComponent({
-  name: "Card",
+  name: "RegCard",
   props: {
     outline: {
       type: Boolean,
