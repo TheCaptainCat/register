@@ -1,0 +1,180 @@
+@import "variables";
+
+form.reg-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+
+  .reg-input-container {
+    width: 100%;
+
+    .reg-input {
+      width: 100%;
+    }
+
+    .error {
+      color: red;
+    }
+  }
+
+  .reg-btn {
+    margin-top: 20px;
+  }
+}
+
+.reg-input-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 20px;
+
+  .reg-input {
+    position: relative;
+
+    span {
+      position: absolute;
+      opacity: 0.6;
+      top: 2px;
+      left: 5px;
+      cursor: text;
+      transition: all 0.4s ease-in-out;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0);
+      margin: 0 0 2px 0;
+      padding: 0;
+      height: 30px;
+      outline: none;
+      border: 0;
+      border-bottom: $grey-md solid 2px;
+      transition: all 0.5s ease-in-out;
+
+      &:focus {
+        border-bottom: $accent-light solid 2px;
+      }
+    }
+
+    input.has-value + span,
+    input:focus + span {
+      opacity: 1;
+      transform: translate(-5px, -1em);
+      font-size: 0.8em;
+      cursor: default;
+    }
+  }
+}
+
+.reg-btn {
+  transition: all .2s ease-in-out;
+  border-radius: $border-radius;
+  font-weight: bolder;
+  font-family: inherit;
+  margin: 5px;
+  cursor: pointer;
+
+  &.sm {
+    font-size: 1rem;
+    padding: 5px 15px;
+  }
+
+  &.md {
+    font-size: 1.5rem;
+    padding: 5px 15px;
+  }
+
+  &.lg {
+    font-size: 2.5rem;
+    padding: 10px 20px;
+  }
+
+  &:not(.light) {
+    background-color: $accent-light;
+    border: $accent-light solid 2px;
+    color: white;
+
+    &.loading {
+      color: $accent-light;
+
+      .loading-label {
+        color: white;
+      }
+    }
+
+    &:hover {
+      border-color: $accent-dark;
+      background-color: $accent-dark;
+
+      &.loading {
+        color: $accent-dark;
+      }
+    }
+
+    &:active:not(.loading) {
+      border: $outline-gold solid 2px;
+      background-color: $accent-darker;
+    }
+  }
+
+  &.light {
+    background-color: white;
+    border: $accent-light solid 2px;
+    color: black;
+
+    &.loading {
+      color: white;
+
+      .loading-label {
+        color: black;
+      }
+    }
+
+    &:hover {
+      border-color: $accent-dark;
+      background-color: $grey-lighter;
+
+      &.loading {
+        color: $grey-lighter;
+      }
+    }
+
+    &:active:not(.loading) {
+      border: $outline-gold solid 2px;
+      background-color: $grey-light;
+    }
+  }
+
+  &.loading {
+    position: relative;
+
+    .loading-label {
+      position: absolute;
+      margin-left: auto;
+      margin-right: auto;
+      transform: translateY(-33px);
+      left: 0;
+      right: 0;
+      text-align: center;
+    }
+  }
+
+
+  &:focus {
+    outline: none;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+
+    &.loading {
+      cursor: wait;
+    }
+  }
+
+  > svg {
+    margin-left: 10px;
+  }
+}

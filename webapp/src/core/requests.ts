@@ -5,13 +5,7 @@ export interface FetchResponse<T> {
   status: string;
 }
 
-export enum HttpMethod {
-  get = "GET",
-  post = "POST",
-  put = "PUT",
-  patch = "PATCH",
-  delete = "DELETE",
-}
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 export class FetchError<T> extends Error {
   public readonly request: FetchRequest<T>;

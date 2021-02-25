@@ -1,0 +1,16 @@
+@import "variables";
+
+body {
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  height: 100vh;
+  background-color: $bg-darker;
+
+  > #app {
+    height: 100%;
+  }
+}
+
+hr {
+  width: 100%;
+}

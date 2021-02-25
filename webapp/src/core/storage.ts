@@ -1,14 +1,17 @@
-class AppStorage {
-  public get<T>(key: string): T | undefined {
-    const item = localStorage.getItem(key);
-    if (item !== null) return JSON.parse(item) as T;
-    return undefined;
+export default abstract class AppStorage<T extends object> {
+  private readonly _key: string;
+
+  protected constructor(key: string) {
+    this._key = key;
   }
 
-  public set<T>(key: string, value: T) {
-    localStorage.setItem(key, JSON.stringify(value));
+  public get(): T | null {
+    const item = localStorage.getItem(this._key);
+    if (item !== null) return JSON.parse(item) as T;
+    return null;
+  }
+
+  public set(value: T): void {
+    localStorage.setItem(this._key, JSON.stringify(value));
   }
 }
-
-const storage = new AppStorage();
-export default storage;

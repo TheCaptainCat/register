@@ -1,0 +1,23 @@
+.flex {
+  display: flex;
+
+  &.max-height {
+    height: 100%;
+  }
+  &.dir-col {
+    flex-direction: column;
+  }
+  &.dir-row {
+    flex-direction: row;
+  }
+  &.jcc {
+    justify-content: center;
+  }
+  &.aic {
+    align-items: center;
+  }
+
+  .flex-grow-1 {
+    flex-grow: 1;
+  }
+}
