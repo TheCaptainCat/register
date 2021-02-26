@@ -19,11 +19,7 @@
       <ul>
         <li v-for="error in state.errors" :key="error">{{ error }}</li>
       </ul>
-      <reg-button
-        icon="sign-in-alt"
-        :loading="state.loading"
-        @click="loginUser"
-      >
+      <reg-button icon="login" :loading="state.loading" @click="loginUser">
         {{ $t("views.login.btn") }}
       </reg-button>
     </reg-form>

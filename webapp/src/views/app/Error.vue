@@ -1,7 +1,7 @@
 <template>
   <reg-card class="app-error-container flex dir-col aic">
     <div class="flex aic">
-      <fa-icon icon="exclamation-circle" size="3x" />
+      <icon name="exclamation-circle" size="3x" />
       <div class="text">
         {{ $t("views.app.error.text") }}
       </div>
@@ -15,12 +15,12 @@
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
 import { RegCard } from "@/components/containers";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { Icon } from "@/components";
 
 export default defineComponent({
   name: "Error",
   components: {
-    FaIcon: FontAwesomeIcon,
+    Icon,
     RegCard,
   },
   setup() {

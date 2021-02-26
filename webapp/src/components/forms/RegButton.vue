@@ -4,23 +4,25 @@
       :class="['reg-btn', size, light ? 'light' : '', loading ? 'loading' : '']"
       :disabled="loading"
     >
-      <slot />
-      <fa-icon v-if="icon" :icon="icon" />
-      <div v-if="loading" class="loading-label">
-        <fa-icon icon="spinner" spin />
-      </div>
+      <span class="reg-btn-inner">
+        <slot />
+        <icon v-if="icon" :name="icon" :size="1.5" />
+      </span>
+      <span v-if="loading" class="loading-label">
+        <icon name="loading" spin :size="1.5" />
+      </span>
     </button>
   </div>
 </template>
 
 <script lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { Icon } from "@/components";
 import { defineComponent, reactive } from "vue";
 
 export default defineComponent({
   name: "RegButton",
   components: {
-    FaIcon: FontAwesomeIcon,
+    Icon,
   },
   props: {
     size: {

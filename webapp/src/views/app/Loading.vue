@@ -2,7 +2,7 @@
   <reg-card class="app-loading-container">
     <div class="app-loading flex dir-col aic">
       <div class="flex aic">
-        <fa-icon icon="spinner" spin size="3x" />
+        <icon name="loading" spin :size="3" />
         <div class="text">
           {{ $t("components.loader.text") }}
         </div>
@@ -15,28 +15,22 @@
 </template>
 
 <script lang="ts">
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { defineComponent, reactive } from "vue";
+import { Icon } from "@/components";
+import { defineComponent } from "vue";
 import { RegCard } from "@/components/containers";
 
 export default defineComponent({
   name: "Loading",
   components: {
-    FaIcon: FontAwesomeIcon,
+    Icon,
     RegCard,
-  },
-  setup() {
-    const state = reactive({});
-    return {
-      state,
-    };
   },
 });
 </script>
 
 <style lang="scss" scoped>
 .app-loading-container {
-  svg {
+  .mdi {
     margin-right: 15px;
   }
 
