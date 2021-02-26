@@ -3,19 +3,20 @@
     <div class="flex aic">
       <icon name="exclamation-circle" size="3x" />
       <div class="text">
-        {{ $t("views.app.error.text") }}
+        {{ i18n.t("views.app.error.text") }}
       </div>
     </div>
     <div class="subtext">
-      {{ $t("views.app.error.subtext") }}
+      {{ i18n.t("views.app.error.subtext") }}
     </div>
   </reg-card>
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from "vue";
+import { defineComponent } from "vue";
 import { RegCard } from "@/components/containers";
 import { Icon } from "@/components";
+import { useI18n } from "@/plugins/i18n";
 
 export default defineComponent({
   name: "Error",
@@ -24,10 +25,9 @@ export default defineComponent({
     RegCard,
   },
   setup() {
-    const state = reactive({});
-
+    const i18n = useI18n();
     return {
-      state,
+      i18n,
     };
   },
 });

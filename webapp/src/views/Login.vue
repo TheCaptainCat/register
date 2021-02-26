@@ -1,26 +1,23 @@
 <template>
   <reg-card class="flex aic dir-col">
-    <div class="login-header">{{ $t("views.login.header") }}</div>
-    <div class="login-subheader">{{ $t("views.login.subheader") }}</div>
+    <div class="login-header">{{ i18n.t("views.login.header") }}</div>
+    <div class="login-subheader">{{ i18n.t("views.login.subheader") }}</div>
     <reg-form @submit="loginUser">
       <reg-input
         name="username"
-        label="Username"
+        :label="i18n.t('views.login.username')"
         v-model="fields.username.value"
         :error="fields.username.error"
       />
       <reg-input
         name="password"
-        label="Password"
+        :label="i18n.t('views.login.password')"
         type="password"
         v-model="fields.password.value"
         :error="fields.password.error"
       />
-      <ul>
-        <li v-for="error in state.errors" :key="error">{{ error }}</li>
-      </ul>
       <reg-button icon="login" :loading="state.loading" @click="loginUser">
-        {{ $t("views.login.btn") }}
+        {{ i18n.t("views.login.btn") }}
       </reg-button>
     </reg-form>
   </reg-card>
@@ -30,6 +27,7 @@
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { defineComponent, reactive } from "vue";
+import { useI18n } from "@/plugins/i18n";
 import { login } from "@/composition/user";
 import { FetchError } from "@/core/requests";
 import { RegForm, RegButton, RegInput } from "@/components/forms";
@@ -77,6 +75,7 @@ export default defineComponent({
     RegCard,
   },
   setup() {
+    const i18n = useI18n();
     const state = reactive<LoginState>({
       errors: [],
       loading: false,
@@ -95,6 +94,7 @@ export default defineComponent({
       state.loading = false;
     };
     return {
+      i18n,
       state,
       fields,
       loginUser,
@@ -104,6 +104,8 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+@import "../styles/variables";
+
 .login-header {
   font-weight: bold;
   font-size: 3rem;
@@ -111,5 +113,12 @@ export default defineComponent({
 .login-subheader {
   font-size: 1.5rem;
   margin: 10px 0 30px 0;
+}
+.error-wrapper {
+  list-style: none;
+  padding: 5px 10px;
+  border: red solid 1px;
+  color: red;
+  border-radius: $border-radius;
 }
 </style>

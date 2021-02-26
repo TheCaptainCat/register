@@ -4,19 +4,20 @@
       <div class="flex aic">
         <icon name="loading" spin :size="3" />
         <div class="text">
-          {{ $t("components.loader.text") }}
+          {{ i18n.t("components.loader.text") }}
         </div>
       </div>
       <div class="subtext">
-        {{ $t("components.loader.subtext") }}
+        {{ i18n.t("components.loader.subtext") }}
       </div>
     </div>
   </reg-card>
 </template>
 
 <script lang="ts">
-import { Icon } from "@/components";
 import { defineComponent } from "vue";
+import { Icon } from "@/components";
+import { useI18n } from "@/plugins/i18n";
 import { RegCard } from "@/components/containers";
 
 export default defineComponent({
@@ -24,6 +25,12 @@ export default defineComponent({
   components: {
     Icon,
     RegCard,
+  },
+  setup() {
+    const i18n = useI18n();
+    return {
+      i18n,
+    };
   },
 });
 </script>

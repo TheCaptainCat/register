@@ -18,11 +18,14 @@
 
 <script lang="ts">
 import { defineComponent, reactive, computed } from "vue";
+import { provideI18n } from "@/plugins/i18n";
 import { fetchUserInfo, userStore } from "@/composition/user";
 import { FetchError } from "@/core/requests";
 import Login from "@/views/Login.vue";
 import Loading from "@/views/app/Loading.vue";
 import Error from "@/views/app/Error.vue";
+import fr from "@/i18n/fr";
+import en from "@/i18n/en";
 
 interface AppState {
   loading: boolean;
@@ -45,6 +48,7 @@ export default defineComponent({
   name: "App",
   components: { Loading, Login, Error },
   setup() {
+    provideI18n({ fr, en }, "en");
     const state = reactive<AppState>({
       loading: true,
       error: false,

@@ -1,15 +1,24 @@
-import { App } from "vue";
-import fr from "@/i18n/fr";
-import en from "@/i18n/en";
-import { languageStorage, languageStore } from "@/composition/language";
+import { provide, inject, ref, Ref } from "vue";
+import AppStorage from "@/core/storage";
 
 type LangDefinition = Record<string, string | object>;
 type LangStrings = Record<string, string>;
 
-const languages: Record<string, LangDefinition> = {
-  fr,
-  en,
-};
+interface I18n {
+  locale: Ref<string>;
+  defaultLocale: string;
+  messages: Record<string, LangStrings>;
+  t: (key: string) => string;
+  changeLocale: (lang: string) => void;
+}
+
+class LanguageStorage extends AppStorage<{ language: string }> {
+  public constructor() {
+    super("language");
+  }
+}
+
+const languageStorage = new LanguageStorage();
 
 const parseStrings = (prefix: string, node: LangDefinition): LangStrings => {
   const strings: LangStrings = {};
@@ -30,7 +39,9 @@ const parseStrings = (prefix: string, node: LangDefinition): LangStrings => {
   return strings;
 };
 
-const buildI18nStrings = (): Record<string, LangStrings> => {
+const buildI18nStrings = (
+  languages: Record<string, LangDefinition>
+): Record<string, LangStrings> => {
   const built: Record<string, LangStrings> = {};
   for (const lang in languages) {
     built[lang] = parseStrings("", languages[lang]);
@@ -38,28 +49,46 @@ const buildI18nStrings = (): Record<string, LangStrings> => {
   return built;
 };
 
-const i18n = {
-  install: (app: App<Element>, options: { default: string }): void => {
-    const allStrings = buildI18nStrings();
-
-    let lang = options.default;
-    const storedLang = languageStorage.get();
-    if (storedLang !== null) {
-      lang = storedLang.language;
+const createI18n = (
+  config: Record<string, LangDefinition>,
+  lang: string,
+  defaultLocale: string
+): I18n => ({
+  locale: ref(lang),
+  defaultLocale,
+  messages: buildI18nStrings(config),
+  t(key) {
+    if (key in this.messages[this.locale.value]) {
+      return this.messages[lang][key];
+    } else if (key in this.messages[this.defaultLocale]) {
+      return this.messages[this.defaultLocale][key];
     }
-
-    languageStore.setLanguage(lang);
-
-    app.config.globalProperties.$t = (key: string) => {
-      const lang = languageStore.state.language || options.default;
-      if (key in allStrings[lang]) {
-        return allStrings[lang][key];
-      } else if (key in allStrings[options.default]) {
-        return allStrings[options.default][key];
-      }
-      return key;
-    };
+    return key;
   },
-};
+  changeLocale(lang) {
+    this.locale.value = lang;
+  },
+});
 
-export default i18n;
+const i18nSymbol = Symbol();
+
+function provideI18n(
+  i18nConfig: Record<string, LangDefinition>,
+  defaultLang: string
+): void {
+  let lang = defaultLang;
+  const storedLang = languageStorage.get();
+  if (storedLang !== null) {
+    lang = storedLang.language;
+  }
+  const i18n = createI18n(i18nConfig, lang, defaultLang);
+  provide(i18nSymbol, i18n);
+}
+
+function useI18n(): I18n {
+  const i18n = inject<I18n>(i18nSymbol);
+  if (!i18n) throw new Error("No i18n provided");
+  return i18n;
+}
+
+export { provideI18n, useI18n };

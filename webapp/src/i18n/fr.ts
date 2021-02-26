@@ -8,9 +8,20 @@ const fr = {
   views: {
     app: {
       error: {
-        text: "Le Registre est injoignable",
+        text: "Le Register est injoignable",
+        subtext: "Contactez votre chef de chapitre",
       },
     },
+    login: {
+      header: "Bienvenue dans le Registre",
+      subheader: "Communiquez vos identifiants",
+      username: "Identifiant",
+      password: "Mot de passe",
+      btn: "Connexion",
+    },
+  },
+  api: {
+    "user.login.wrong_credentials": "Informations incorrectes",
   },
 };
 
