@@ -11,9 +11,7 @@
   <div v-else-if="!authenticated" class="flex aic jcc max-height">
     <Login />
   </div>
-  <div v-else>
-    <h1>Register</h1>
-  </div>
+  <main-part v-else />
 </template>
 
 <script lang="ts">
@@ -21,11 +19,13 @@ import { defineComponent, reactive, computed } from "vue";
 import { provideI18n } from "@/plugins/i18n";
 import { fetchUserInfo, userStore } from "@/composition/user";
 import { FetchError } from "@/core/requests";
-import Login from "@/views/Login.vue";
-import Loading from "@/views/app/Loading.vue";
-import Error from "@/views/app/Error.vue";
 import fr from "@/i18n/fr";
 import en from "@/i18n/en";
+
+import Login from "@/views/main/Login.vue";
+import Loading from "@/views/main/Loading.vue";
+import Error from "@/views/main/Error.vue";
+import Main from "@/views/main/Main.vue";
 
 interface AppState {
   loading: boolean;
@@ -46,7 +46,7 @@ const fetchInitData = async (state: AppState) => {
 
 export default defineComponent({
   name: "App",
-  components: { Loading, Login, Error },
+  components: { Loading, Login, Error, MainPart: Main },
   setup() {
     provideI18n({ fr, en }, "en");
     const state = reactive<AppState>({

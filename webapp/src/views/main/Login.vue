@@ -104,7 +104,7 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/variables";
+@import "../../styles/variables";
 
 .login-header {
   font-weight: bold;
