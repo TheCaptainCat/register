@@ -20,6 +20,7 @@
         {{ i18n.t("views.login.btn") }}
       </reg-button>
     </reg-form>
+    <LanguageSelector class="language-selector" />
   </reg-card>
 </template>
 
@@ -32,43 +33,17 @@ import { login } from "@/composition/user";
 import { FetchError } from "@/core/requests";
 import { RegForm, RegButton, RegInput } from "@/components/forms";
 import { RegCard } from "@/components/containers";
+import LanguageSelector from "@/components/LanguageSelector.vue";
 
 interface LoginState {
   errors: string[];
   loading: boolean;
 }
 
-const createForm = () => {
-  const form = useForm({
-    validationSchema: yup.object({
-      username: yup.string().required().min(4),
-      password: yup.string().required().min(4),
-    }),
-  });
-  const { value: username, errorMessage: usernameError } = useField<string>(
-    "username"
-  );
-  const { value: password, errorMessage: passwordError } = useField<string>(
-    "password"
-  );
-  return {
-    form,
-    fields: reactive({
-      username: {
-        value: username,
-        error: usernameError,
-      },
-      password: {
-        value: password,
-        error: passwordError,
-      },
-    }),
-  };
-};
-
 export default defineComponent({
   name: "Login",
   components: {
+    LanguageSelector,
     RegForm,
     RegButton,
     RegInput,
@@ -101,6 +76,34 @@ export default defineComponent({
     };
   },
 });
+
+const createForm = () => {
+  const form = useForm({
+    validationSchema: yup.object({
+      username: yup.string().required().min(4),
+      password: yup.string().required().min(4),
+    }),
+  });
+  const { value: username, errorMessage: usernameError } = useField<string>(
+    "username"
+  );
+  const { value: password, errorMessage: passwordError } = useField<string>(
+    "password"
+  );
+  return {
+    form,
+    fields: reactive({
+      username: {
+        value: username,
+        error: usernameError,
+      },
+      password: {
+        value: password,
+        error: passwordError,
+      },
+    }),
+  };
+};
 </script>
 
 <style lang="scss" scoped>
@@ -114,11 +117,7 @@ export default defineComponent({
   font-size: 1.5rem;
   margin: 10px 0 30px 0;
 }
-.error-wrapper {
-  list-style: none;
-  padding: 5px 10px;
-  border: red solid 1px;
-  color: red;
-  border-radius: $border-radius;
+.language-selector {
+  margin-top: 15px;
 }
 </style>

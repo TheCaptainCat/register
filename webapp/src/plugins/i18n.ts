@@ -1,4 +1,4 @@
-import { provide, inject, ref, Ref } from "vue";
+import { ref, provide, inject, Ref } from "vue";
 import AppStorage from "@/core/storage";
 
 type LangDefinition = Record<string, string | object>;
@@ -12,13 +12,13 @@ interface I18n {
   changeLocale: (lang: string) => void;
 }
 
-class LanguageStorage extends AppStorage<{ language: string }> {
-  public constructor() {
-    super("language");
+class LocaleStorage extends AppStorage<{ lang: string }> {
+  constructor() {
+    super("locale");
   }
 }
 
-const languageStorage = new LanguageStorage();
+const localeStorage = new LocaleStorage();
 
 const parseStrings = (prefix: string, node: LangDefinition): LangStrings => {
   const strings: LangStrings = {};
@@ -50,45 +50,47 @@ const buildI18nStrings = (
 };
 
 const createI18n = (
-  config: Record<string, LangDefinition>,
-  lang: string,
-  defaultLocale: string
+  locale: string,
+  defaultLocale: string,
+  messages: Record<string, LangStrings>
 ): I18n => ({
-  locale: ref(lang),
+  locale: ref(locale),
   defaultLocale,
-  messages: buildI18nStrings(config),
+  messages,
   t(key) {
-    if (key in this.messages[this.locale.value]) {
-      return this.messages[lang][key];
-    } else if (key in this.messages[this.defaultLocale]) {
+    if (key in this.messages[this.locale.value])
+      return this.messages[this.locale.value][key];
+    if (
+      this.locale.value !== this.defaultLocale &&
+      key in this.messages[this.defaultLocale]
+    )
       return this.messages[this.defaultLocale][key];
-    }
     return key;
   },
   changeLocale(lang) {
+    localeStorage.set({ lang: lang });
     this.locale.value = lang;
   },
 });
 
 const i18nSymbol = Symbol();
 
-function provideI18n(
-  i18nConfig: Record<string, LangDefinition>,
-  defaultLang: string
-): void {
-  let lang = defaultLang;
-  const storedLang = languageStorage.get();
-  if (storedLang !== null) {
-    lang = storedLang.language;
-  }
-  const i18n = createI18n(i18nConfig, lang, defaultLang);
+const provideI18n = (
+  defaultLocale: string,
+  messages: Record<string, LangStrings>
+): void => {
+  let lang = defaultLocale;
+  const storedLocale = localeStorage.get();
+  if (storedLocale) lang = storedLocale.lang;
+  else localeStorage.set({ lang });
+  const i18n = createI18n(lang, defaultLocale, messages);
   provide(i18nSymbol, i18n);
-}
+};
 
-function useI18n(): I18n {
+const useI18n = (): I18n => {
   const i18n = inject<I18n>(i18nSymbol);
-  if (!i18n) throw new Error("No i18n provided");
+  if (!i18n) throw new Error("Internal Error: no i18n provided");
   return i18n;
-}
+};
 
-export { provideI18n, useI18n };
+export { buildI18nStrings, provideI18n, useI18n };
