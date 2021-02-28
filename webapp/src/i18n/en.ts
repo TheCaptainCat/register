@@ -1,4 +1,7 @@
 const en = {
+  app: {
+    title: "The Register",
+  },
   components: {
     loader: {
       text: "We are reaching the Register",
@@ -18,6 +21,12 @@ const en = {
       username: "Username",
       password: "Password",
       btn: "Log in",
+    },
+    home: {
+      welcome: "Welcome to the Register of the Council of Sorcerers",
+      private:
+        "The content of this library is strictly reserved for sworn sorcerers",
+      admin: "Register administration",
     },
   },
   api: {

@@ -34,4 +34,13 @@ const login = async (username: string, password: string): Promise<void> => {
   userStore.setState({ user: res.data, authenticated: true });
 };
 
-export { User, userStore, fetchUserInfo, login };
+const hasRole = (role: string): boolean => {
+  const _hasRole = (_user: User, _role: string) =>
+    _user.roles.filter((r) => r.name === _role).length > 0;
+  const user = userStore.state.user;
+  if (!user) return false;
+  if (_hasRole(user, "root")) return true;
+  return _hasRole(user, role);
+};
+
+export { User, userStore, fetchUserInfo, login, hasRole };

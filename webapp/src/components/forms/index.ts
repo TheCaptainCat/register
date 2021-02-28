@@ -1,5 +1,5 @@
-import RegButton from "./RegButton.vue";
-import RegForm from "./RegForm.vue";
-import RegInput from "./RegInput.vue";
+import RegButton from "./Button.vue";
+import RegForm from "./Form.vue";
+import RegInput from "./Input.vue";
 
 export { RegButton, RegForm, RegInput };

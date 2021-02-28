@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { Icon } from "@/components";
-import { defineComponent, reactive } from "vue";
+import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "RegButton",
@@ -38,12 +38,6 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
-  },
-  setup() {
-    const state = reactive({});
-    return {
-      state,
-    };
   },
 });
 </script>
