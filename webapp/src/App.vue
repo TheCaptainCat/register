@@ -17,7 +17,7 @@
 <script lang="ts">
 import { defineComponent, reactive, computed } from "vue";
 import { provideI18n, buildI18nStrings } from "@/plugins/i18n";
-import { fetchUserInfo, userStore } from "@/composition/user";
+import { useUser, userStore } from "@/composition/user";
 import { FetchError } from "@/core/requests";
 import fr from "@/i18n/fr";
 import en from "@/i18n/en";
@@ -34,7 +34,7 @@ interface AppState {
 
 const fetchInitData = async (state: AppState) => {
   try {
-    await fetchUserInfo();
+    await useUser().fetchUserInfo();
   } catch (err) {
     if (!(err instanceof FetchError && err.code === 401)) {
       state.error = true;

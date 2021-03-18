@@ -1,8 +1,5 @@
-import sys
-
-from register import bolinette
-
-app = bolinette.app
+from register import create_app
 
 if __name__ == '__main__':
-    bolinette.run_command(sys.argv[1])
+    blnt = create_app()
+    blnt.exec_cmd_args()

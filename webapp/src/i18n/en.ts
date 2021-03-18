@@ -7,6 +7,12 @@ const en = {
       text: "We are reaching the Register",
       subtext: "Please wait",
     },
+    dataTable: {
+      pagination: "{start} to {end} of {total}",
+    },
+    nav: {
+      logout: "Logout",
+    },
   },
   views: {
     app: {
@@ -26,7 +32,22 @@ const en = {
       welcome: "Welcome to the Register of the Council of Sorcerers",
       private:
         "The content of this library is strictly reserved for sworn sorcerers",
-      admin: "Register administration",
+      admin: {
+        title: "Register administration",
+        manage_users: "Manage accredited sorcerers",
+      },
+    },
+    admin: {
+      users: {
+        title: "Manage authorized sorcerers",
+        columns: {
+          username: "Username",
+          email: "Address",
+          roles: "Roles",
+        },
+        add_role: "Add",
+        new_role: "New role",
+      },
     },
   },
   api: {

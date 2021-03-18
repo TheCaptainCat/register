@@ -8,6 +8,7 @@
         :label="i18n.t('views.login.username')"
         v-model="fields.username.value"
         :error="fields.username.error"
+        fluid
       />
       <reg-input
         name="password"
@@ -15,6 +16,7 @@
         type="password"
         v-model="fields.password.value"
         :error="fields.password.error"
+        fluid
       />
       <reg-button icon="login" :loading="state.loading" @click="loginUser">
         {{ i18n.t("views.login.btn") }}
@@ -29,11 +31,13 @@ import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
 import { defineComponent, reactive } from "vue";
 import { useI18n } from "@/plugins/i18n";
-import { login } from "@/composition/user";
+import { useUser } from "@/composition/user";
 import { FetchError } from "@/core/requests";
-import { RegForm, RegButton, RegInput } from "@/components/forms";
-import { RegCard } from "@/components/containers";
-import LanguageSelector from "@/components/LanguageSelector.vue";
+import RegCard from "@/components/containers/Card.vue";
+import { LanguageSelector } from "@/components";
+import RegForm from "@/components/forms/Form.vue";
+import RegInput from "@/components/forms/Input.vue";
+import RegButton from "@/components/forms/Button.vue";
 
 interface LoginState {
   errors: string[];
@@ -56,6 +60,7 @@ export default defineComponent({
       loading: false,
     });
     const { form, fields } = createForm();
+    const { login } = useUser();
     const loginUser = async () => {
       try {
         state.errors = [];

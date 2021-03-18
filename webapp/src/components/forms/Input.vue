@@ -1,9 +1,10 @@
 <template>
-  <div class="reg-input-container">
+  <div class="reg-input-container" :class="{ fluid: fluid }">
     <label class="reg-input">
       <input
         :name="name"
-        :class="hasValue ? ['has-value'] : []"
+        class="reg-input-elem"
+        :class="{ 'has-value': hasValue }"
         :type="type"
         v-model="val"
       />
@@ -34,6 +35,10 @@ export default defineComponent({
     },
     label: String,
     error: String,
+    fluid: {
+      type: Boolean,
+      default: false,
+    },
   },
   setup(props, context) {
     const val = ref<string | undefined>("");

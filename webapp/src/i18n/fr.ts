@@ -7,6 +7,12 @@ const fr = {
       text: "Nous contactons le Registre",
       subtext: "Veuillez patienter",
     },
+    dataTable: {
+      pagination: "{start} à {end} sur {total}",
+    },
+    nav: {
+      logout: "Déconnexion",
+    },
   },
   views: {
     app: {
@@ -26,6 +32,22 @@ const fr = {
       welcome: "Bienvenue dans le Registre du Conseil des Sorciers",
       private:
         "Le contenu de cette bibliothèque est strictement réservé aux sorcier assermentés",
+      admin: {
+        title: "Administration du Registre",
+        manage_users: "Gérer les sorciers accrédités",
+      },
+    },
+    admin: {
+      users: {
+        title: "Gestion des sorciers accrédités",
+        columns: {
+          username: "Identifiant",
+          email: "Adresse",
+          roles: "Roles",
+        },
+        add_role: "Ajouter",
+        new_role: "Nouveau role",
+      },
     },
   },
   api: {

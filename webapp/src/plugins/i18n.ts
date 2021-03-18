@@ -8,7 +8,7 @@ interface I18n {
   locale: Ref<string>;
   defaultLocale: string;
   messages: Record<string, LangStrings>;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, unknown>) => string;
   changeLocale: (lang: string) => void;
 }
 
@@ -49,6 +49,15 @@ const buildI18nStrings = (
   return built;
 };
 
+const replaceParams = (str: string, params?: Record<string, unknown>) => {
+  if (params)
+    for (const key in params) {
+      const regex = new RegExp(`{ *${key} *}`);
+      str = str.replace(regex, params[key] as string);
+    }
+  return str;
+};
+
 const createI18n = (
   locale: string,
   defaultLocale: string,
@@ -57,14 +66,14 @@ const createI18n = (
   locale: ref(locale),
   defaultLocale,
   messages,
-  t(key) {
+  t(key, params) {
     if (key in this.messages[this.locale.value])
-      return this.messages[this.locale.value][key];
+      return replaceParams(this.messages[this.locale.value][key], params);
     if (
       this.locale.value !== this.defaultLocale &&
       key in this.messages[this.defaultLocale]
     )
-      return this.messages[this.defaultLocale][key];
+      return replaceParams(this.messages[this.defaultLocale][key], params);
     return key;
   },
   changeLocale(lang) {
@@ -93,4 +102,4 @@ const useI18n = (): I18n => {
   return i18n;
 };
 
-export { buildI18nStrings, provideI18n, useI18n };
+export { I18n, buildI18nStrings, provideI18n, useI18n };

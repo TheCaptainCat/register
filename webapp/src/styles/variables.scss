@@ -3,16 +3,23 @@ $bg-darker: #660000;
 $bg-dark: #800000;
 $bg-light: #F0F0D1;
 
+$accent-white: white;
+
 $accent-light: #D90000;
 $accent-dark: #b80000;
 $accent-darker: #8C0000;
 
 $grey-lighter: #f7f7f7;
 $grey-light: #dddddd;
-$grey-md: #888888;
+$grey-md: #aaaaaa;
 $grey-dark: #555555;
 
 $outline-gold: #ffd700;
 
 // SIZES
 $border-radius: 10px;
+
+// BREAKPOINTS
+
+$sm-breakpoint: 600px;
+$md-breakpoint: 1000px;

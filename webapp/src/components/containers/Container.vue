@@ -1,7 +1,9 @@
 <template>
-  <div class="reg-container">
-    <div class="reg-inner-container">
-      <slot />
+  <div class="outer-reg-container">
+    <div class="reg-container">
+      <div class="reg-inner-container">
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -17,22 +19,24 @@ export default defineComponent({
 <style lang="scss" scoped>
 @import "../../styles/variables";
 
-.reg-container {
-  background-color: $bg-light;
+.outer-reg-container {
+  display: flex;
+  justify-content: center;
   height: 100%;
 
-  @media screen and (min-width: 1000px) {
-    width: 1000px;
-    margin-left: calc((100vw - 1000px) / 2);
-  }
-
-  @media screen and (max-width: 1000px) {
+  .reg-container {
+    background-color: $bg-light;
+    height: 100%;
     width: 100%;
     margin: 0;
-  }
 
-  .reg-inner-container {
-    padding: 30px 50px;
+    @media screen and (min-width: $md-breakpoint) {
+      width: $md-breakpoint;
+    }
+
+    .reg-inner-container {
+      padding: 30px 50px;
+    }
   }
 }
 </style>

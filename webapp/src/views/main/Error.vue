@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import { RegCard } from "@/components/containers";
+import RegCard from "@/components/containers/Card.vue";
 import { Icon } from "@/components";
 import { useI18n } from "@/plugins/i18n";
 

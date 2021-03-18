@@ -2,14 +2,14 @@
   <div>
     <button
       :class="['reg-btn', size, light ? 'light' : '', loading ? 'loading' : '']"
-      :disabled="loading"
+      :disabled="disabled || loading"
     >
       <span class="reg-btn-inner">
         <slot />
-        <icon v-if="icon" :name="icon" :size="1.5" />
+        <icon v-if="icon" :name="icon" :size="iconSize" />
       </span>
       <span v-if="loading" class="loading-label">
-        <icon name="loading" spin :size="1.5" />
+        <icon name="loading" spin :size="iconSize" />
       </span>
     </button>
   </div>
@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import { Icon } from "@/components";
-import { defineComponent } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "RegButton",
@@ -26,7 +26,7 @@ export default defineComponent({
   },
   props: {
     size: {
-      type: String,
+      type: String as PropType<"sm" | "md" | "lg">,
       default: "md",
     },
     icon: String,
@@ -37,6 +37,24 @@ export default defineComponent({
     loading: {
       type: Boolean,
       default: false,
+    },
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  data() {
+    return {
+      iconSizes: {
+        sm: 1,
+        md: 2,
+        lg: 3,
+      },
+    };
+  },
+  computed: {
+    iconSize(): number {
+      return this.iconSizes[this.size];
     },
   },
 });

@@ -7,12 +7,6 @@
   width: 100%;
 
   .reg-input-container {
-    width: 100%;
-
-    .reg-input {
-      width: 100%;
-    }
-
     .error {
       color: red;
     }
@@ -26,8 +20,15 @@
 .reg-input-container {
   display: flex;
   flex-direction: column;
-  width: 100%;
   margin-top: 20px;
+
+  &.fluid {
+    width: 100%;
+
+    .reg-input-elem {
+      width: 100%;
+    }
+  }
 
   .reg-input {
     position: relative;
@@ -42,8 +43,8 @@
       font-weight: bold;
     }
 
-    input {
-      width: 100%;
+    .reg-input-elem {
+      min-width: 200px;
       background-color: rgba(0, 0, 0, 0);
       margin: 0 0 2px 0;
       padding: 0;
@@ -58,8 +59,8 @@
       }
     }
 
-    input.has-value + span,
-    input:focus + span {
+    .reg-input-elem.has-value + span,
+    .reg-input-elem:focus + span {
       opacity: 1;
       transform: translate(-5px, -1em);
       font-size: 0.8em;
@@ -79,6 +80,10 @@
   .reg-btn-inner {
     display: flex;
     align-items: center;
+
+    .reg-icon {
+      margin-left: 5px;
+    }
   }
 
   &.sm {
@@ -155,11 +160,28 @@
   &.loading {
     position: relative;
 
+    &.sm {
+      .loading-label {
+        transform: translateY(-28px);
+      }
+    }
+
+    &.md {
+      .loading-label {
+        transform: translateY(-38px);
+      }
+    }
+
+    &.lg {
+      .loading-label {
+        transform: translateY(-60px);
+      }
+    }
+
     .loading-label {
       position: absolute;
       margin-left: auto;
       margin-right: auto;
-      transform: translateY(-34px);
       left: 0;
       right: 0;
       text-align: center;

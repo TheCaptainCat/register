@@ -18,7 +18,7 @@
 import { defineComponent } from "vue";
 import { Icon } from "@/components";
 import { useI18n } from "@/plugins/i18n";
-import { RegCard } from "@/components/containers";
+import RegCard from "@/components/containers/Card.vue";
 
 export default defineComponent({
   name: "Loading",

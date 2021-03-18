@@ -1,5 +1,5 @@
 <template>
-  <header><nav-bar /></header>
+  <header><reg-nav-bar /></header>
   <main>
     <reg-container>
       <router-view />
@@ -10,13 +10,12 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
-import NavBar from "@/components/NavBar.vue";
-import RegFooter from "@/components/Footer.vue";
+import { RegFooter, RegNavBar } from "@/components/layout";
 import RegContainer from "@/components/containers/Container.vue";
 
 export default defineComponent({
   name: "Main",
-  components: { RegContainer, NavBar, RegFooter },
+  components: { RegContainer, RegNavBar, RegFooter },
 });
 </script>
 

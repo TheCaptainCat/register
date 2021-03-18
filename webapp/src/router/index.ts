@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import Home from "@/views/home/Home.vue";
+import adminRoutes from "@/router/admin";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -18,5 +19,6 @@ const addRoutes = (routes: RouteRecordRaw[]): void => {
   for (const route of routes) router.addRoute(route);
 };
 
-export { addRoutes };
+addRoutes(adminRoutes);
+
 export default router;

@@ -1,0 +1,76 @@
+@import "variables";
+
+.data-table-container {
+  background-color: $accent-white;
+  border-radius: $border-radius;
+  box-shadow: 0 0 15px -5px rgba(0, 0, 0, 0.5);
+
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+      text-align: left;
+      .sort-icon {
+        margin-left: 5px;
+      }
+      .sort-icon-none {
+        color: $accent-white;
+      }
+      &:hover {
+        cursor: pointer;
+
+        .sort-icon-none {
+          color: inherit;
+        }
+      }
+    }
+
+    th,
+    td {
+      padding: 10px 15px;
+    }
+
+    @media screen and (max-width: $sm-breakpoint) {
+      th, td {
+        display: flex;
+      }
+    }
+
+    tr {
+      border-bottom: $grey-light solid 2px;
+      transition: all 0.2s ease-in-out;
+    }
+
+    tbody {
+      tr:hover {
+        background: $grey-light;
+      }
+    }
+  }
+
+  .data-table-footer {
+    padding: 10px 15px;
+    display: flex;
+    justify-content: flex-end;
+
+    .data-table-footer-inner {
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+
+      .pagination-ctrl {
+        font-weight: bold;
+        padding: 5px;
+
+        &.disabled {
+          color: rgba(0, 0, 0, 0.5);
+          cursor: not-allowed;
+        }
+        &:not(.disabled) {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
