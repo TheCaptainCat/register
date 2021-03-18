@@ -49,6 +49,7 @@ celerybeat-schedule
 *.sage.py
 env.local.*.yaml
 instance/uploads
+instance/swagger.yaml
 *.db
 .profile
 .venv
