@@ -43,10 +43,10 @@ const fr = {
         columns: {
           username: "Identifiant",
           email: "Adresse",
-          roles: "Roles",
+          roles: "Rôles",
         },
         add_role: "Ajouter",
-        new_role: "Nouveau role",
+        new_role: "Ajouter un rôle",
       },
     },
   },

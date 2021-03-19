@@ -46,7 +46,7 @@ const en = {
           roles: "Roles",
         },
         add_role: "Add",
-        new_role: "New role",
+        new_role: "Add role",
       },
     },
   },

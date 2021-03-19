@@ -1,24 +1,21 @@
 <template>
-  <div class="reg-input-container" :class="{ fluid: fluid }">
-    <label class="reg-input">
-      <select
-        class="reg-input-elem"
-        :class="{ 'has-value': hasValue }"
-        v-model="val"
-        @change="val = $event.target.value"
-        :disabled="disabled"
+  <div class="reg-form reg-select-container" :class="{ fluid: fluid }">
+    <label class="reg-select">
+      <div class="reg-select-label">{{ label }}</div>
+      <el-select
+        :model-value="modelValue"
+        @update:model-value="(value) => $emit('update:modelValue', value)"
       >
-        <option v-for="option in options" :key="option.key" :value="option.key">
-          {{ option.label }}
-        </option>
-      </select>
-      <span v-if="label">{{ label }}</span>
+        <div v-for="item in options" :key="item.key">
+          <el-option :label="item.label" :value="item.key" />
+        </div>
+      </el-select>
     </label>
   </div>
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, PropType, ref, watch } from "vue";
+import { defineComponent, PropType } from "vue";
 
 export default defineComponent({
   name: "RegSelect",
@@ -28,10 +25,10 @@ export default defineComponent({
       required: true,
     },
     modelValue: {
-      type: Object as PropType<RegSelectOption<unknown>>,
+      type: String,
     },
     options: {
-      type: Array as PropType<RegSelectOption<unknown>[]>,
+      type: Array as PropType<RegSelectOption[]>,
     },
     label: String,
     error: String,
@@ -44,40 +41,12 @@ export default defineComponent({
       default: false,
     },
   },
-  setup(props, context) {
-    const val = ref<string>("");
-    const hasValue = computed(() => val.value !== "");
-    watch(val, () => {
-      let value = null;
-      if (props.options) {
-        const res = props.options.filter((o) => o.key === val.value);
-        if (res && res.length) value = res[0];
-      }
-      context.emit("update:modelValue", value);
-    });
-    watch(
-      () => props.modelValue,
-      () => {
-        if (!props.modelValue) val.value = "";
-        else if (props.modelValue.key !== val.value)
-          val.value = props.modelValue.key;
-      }
-    );
-    const clickOption = (value: string) => {
-      val.value = value;
-    };
-    return {
-      val,
-      hasValue,
-      clickOption,
-    };
-  },
 });
 
-export interface RegSelectOption<T> {
+export interface RegSelectOption {
   key: string;
   label: string;
-  value: T;
+  value: string;
 }
 </script>
 

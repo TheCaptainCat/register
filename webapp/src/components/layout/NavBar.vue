@@ -12,7 +12,7 @@
       </div>
       <div>
         <reg-button
-          size="sm"
+          size="mini"
           :loading="state.loggingOut"
           @click="logoutUser"
           icon="logout"

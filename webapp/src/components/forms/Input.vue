@@ -1,16 +1,10 @@
 <template>
-  <div class="reg-input-container" :class="{ fluid: fluid }">
-    <label class="reg-input">
-      <input
-        :name="name"
-        class="reg-input-elem"
-        :class="{ 'has-value': hasValue }"
-        :type="type"
-        v-model="val"
-      />
-      <span v-if="label">{{ label }}</span>
+  <div class="reg-form reg-input-container" :class="{ fluid: fluid }">
+    <label>
+      <div class="reg-input-label">{{ label }}</div>
+      <el-input v-model="val" :placeholder="placeholder" />
     </label>
-    <div v-if="error" class="error">
+    <div v-if="error" class="reg-input-error">
       {{ error }}
     </div>
   </div>
@@ -34,6 +28,7 @@ export default defineComponent({
       type: String,
     },
     label: String,
+    placeholder: String,
     error: String,
     fluid: {
       type: Boolean,
@@ -59,3 +54,20 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.reg-input-container {
+  &.fluid {
+    width: 100%;
+  }
+
+  .reg-input-label {
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+
+  .reg-input-error {
+    color: red;
+  }
+}
+</style>

@@ -1,17 +1,15 @@
 <template>
-  <div>
-    <button
-      :class="['reg-btn', size, light ? 'light' : '', loading ? 'loading' : '']"
-      :disabled="disabled || loading"
+  <div class="reg-form reg-btn-container">
+    <el-button
+      class="reg-btn"
+      type="primary"
+      :loading="loading"
+      :disabled="disabled"
+      :size="size"
     >
-      <span class="reg-btn-inner">
-        <slot />
-        <icon v-if="icon" :name="icon" :size="iconSize" />
-      </span>
-      <span v-if="loading" class="loading-label">
-        <icon name="loading" spin :size="iconSize" />
-      </span>
-    </button>
+      <slot />
+      <icon class="reg-btn-icon" v-if="icon" :name="icon" :size="1" />
+    </el-button>
   </div>
 </template>
 
@@ -26,8 +24,8 @@ export default defineComponent({
   },
   props: {
     size: {
-      type: String as PropType<"sm" | "md" | "lg">,
-      default: "md",
+      type: String as PropType<"medium" | "small" | "mini">,
+      default: "medium",
     },
     icon: String,
     light: {
@@ -43,19 +41,19 @@ export default defineComponent({
       default: false,
     },
   },
-  data() {
-    return {
-      iconSizes: {
-        sm: 1,
-        md: 2,
-        lg: 3,
-      },
-    };
-  },
-  computed: {
-    iconSize(): number {
-      return this.iconSizes[this.size];
-    },
-  },
 });
 </script>
+
+<style lang="scss" scoped>
+.reg-btn-container {
+  display: flex;
+
+  .reg-btn {
+    margin: auto;
+
+    .reg-btn-icon {
+      margin-left: 5px;
+    }
+  }
+}
+</style>

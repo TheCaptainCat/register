@@ -22,6 +22,13 @@ const addRoleToUser = async (role: Role, user: User): Promise<User> => {
   return res.data;
 };
 
+const removeRoleFromUser = async (role: Role, user: User): Promise<User> => {
+  const res = await request.delete<User>(
+    `/user/${user.username}/roles/${role.name}`
+  );
+  return res.data;
+};
+
 // USE ROLES
 
 interface RolesState {
@@ -32,6 +39,7 @@ interface UseRolesParams {
   state: RolesState;
   getRoles: () => Promise<Role[]>;
   addRoleToUser: (role: Role, user: User) => Promise<User>;
+  removeRoleFromUser: (role: Role, user: User) => Promise<User>;
 }
 
 const useRoles = (): UseRolesParams => {
@@ -39,6 +47,7 @@ const useRoles = (): UseRolesParams => {
     state: { roles: [] },
     getRoles,
     addRoleToUser,
+    removeRoleFromUser,
   };
 };
 

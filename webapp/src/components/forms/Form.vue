@@ -1,5 +1,5 @@
 <template>
-  <div :id="`reg-form-${uid}`" class="reg-form">
+  <div :id="`reg-form-${uid}`" class="reg-form-container">
     <slot />
   </div>
 </template>
