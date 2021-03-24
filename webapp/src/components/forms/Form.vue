@@ -20,7 +20,7 @@ export default defineComponent({
   setup(props, context) {
     let uid = Math.random().toString(36).substring(7);
     const submit = (e: KeyboardEvent) => {
-      if (e.code === "Enter") context.emit("submit");
+      if (["Enter", "NumpadEnter"].includes(e.code)) context.emit("submit");
     };
     return {
       submit,

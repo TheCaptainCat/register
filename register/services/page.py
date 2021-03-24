@@ -17,9 +17,7 @@ class PageService(core.HistorizedService):
         return await self.get_by('article_id', article.id)
 
     async def get_one_by_article_language(self, article, language):
-        pages = await (self.repo.query()
-                       .filter(lambda p: p.article == article and p.language == language)
-                       .all())
+        pages = await (self.repo.query().filter_by(article=article, language=language).all())
         if not len(pages):
             raise NotFoundError(f'page.not_found:lang,article:{language.name},{article.key}')
         return pages[0]

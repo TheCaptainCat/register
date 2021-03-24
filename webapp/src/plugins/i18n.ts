@@ -8,6 +8,7 @@ interface I18n {
   locale: Ref<string>;
   defaultLocale: string;
   messages: Record<string, LangStrings>;
+  flags: Record<string, string>;
   t: (key: string, params?: Record<string, unknown>) => string;
   changeLocale: (lang: string) => void;
 }
@@ -61,11 +62,13 @@ const replaceParams = (str: string, params?: Record<string, unknown>) => {
 const createI18n = (
   locale: string,
   defaultLocale: string,
-  messages: Record<string, LangStrings>
+  messages: Record<string, LangStrings>,
+  flags: Record<string, string>
 ): I18n => ({
   locale: ref(locale),
   defaultLocale,
   messages,
+  flags: flags,
   t(key, params) {
     if (key in this.messages[this.locale.value])
       return replaceParams(this.messages[this.locale.value][key], params);
@@ -86,13 +89,14 @@ const i18nSymbol = Symbol();
 
 const provideI18n = (
   defaultLocale: string,
-  messages: Record<string, LangStrings>
+  messages: Record<string, LangStrings>,
+  flags: Record<string, string>
 ): void => {
   let lang = defaultLocale;
   const storedLocale = localeStorage.get();
-  if (storedLocale) lang = storedLocale.lang;
+  if (storedLocale && storedLocale.lang) lang = storedLocale.lang;
   else localeStorage.set({ lang });
-  const i18n = createI18n(lang, defaultLocale, messages);
+  const i18n = createI18n(lang, defaultLocale, messages, flags);
   provide(i18nSymbol, i18n);
 };
 

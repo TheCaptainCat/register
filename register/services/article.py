@@ -13,6 +13,9 @@ class ArticleService(core.HistorizedService):
     async def get_by_language(self, language):
         return [page.article for page in language.pages]
 
+    async def get_by_key(self, key: str):
+        return await self.get_first_by('key', key)
+
     async def create(self, values, *, current_user=None):
         article = True
         key = None

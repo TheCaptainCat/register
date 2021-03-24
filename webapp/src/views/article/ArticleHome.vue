@@ -13,6 +13,15 @@
       </in-link>
     </reg-section>
     <h2 class="section-title flex">
+      {{ i18n.t("views.home.change_locale") }}
+      <span
+        v-for="language in availableLanguages"
+        :key="language"
+        :class="['flag-icon', `flag-icon-${i18n.flags[language]}`]"
+        @click="changeLocale(language)"
+      ></span>
+    </h2>
+    <h2 class="section-title flex">
       {{ i18n.t("views.home.articles.title") }}
       <span class="flex-grow-1" />
       <reg-input name="new-article" v-model="newArticle" />
@@ -25,8 +34,19 @@
       {{ i18n.t("views.home.articles.empty") }}
     </h3>
     <ul v-else>
-      <li v-for="article in Articles.state.articles" :key="article.article">
-        {{ article.name }}
+      <li v-for="article in sortedArticles" :key="article.article">
+        <in-link
+          :to="{
+            name: 'ViewArticle',
+            params: {
+              lang,
+              key: article.article,
+              name: Article.formatName(article.name),
+            },
+          }"
+        >
+          {{ article.name }}
+        </in-link>
       </li>
     </ul>
   </div>
@@ -38,14 +58,17 @@ import { useI18n } from "@/plugins/i18n";
 import { InLink } from "@/components";
 import RegSection from "@/components/containers/Section.vue";
 import { useUser } from "@/composition/user";
-import { useArticle, useArticles } from "@/composition/article";
+import { PartialArticle, useArticle, useArticles } from "@/composition/article";
 import Loading from "@/views/main/Loading.vue";
 import RegButton from "@/components/forms/Button.vue";
 import RegInput from "@/components/forms/Input.vue";
 
 export default defineComponent({
-  name: "Home",
+  name: "ArticleHome",
   components: { RegInput, RegButton, Loading, RegSection, InLink },
+  props: {
+    lang: { type: String, required: true },
+  },
   setup() {
     const i18n = useI18n();
     const { hasRole } = useUser();
@@ -62,25 +85,47 @@ export default defineComponent({
     };
   },
   mounted() {
+    this.i18n.changeLocale(this.lang);
     this.Articles.state.loading = true;
     this.getArticles();
   },
+  computed: {
+    sortedArticles(): PartialArticle[] {
+      const articles = this.Articles.state.articles;
+      return articles.sort((a: PartialArticle, b: PartialArticle) =>
+        a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+      );
+    },
+    availableLanguages(): string[] {
+      const lang = Object.keys(this.i18n.messages);
+      return lang.filter((l) => l !== this.lang);
+    },
+  },
   methods: {
     async getArticles() {
-      this.Articles.state.articles =
-        (await this.Articles.getFromLang(this.i18n.locale.value)) || [];
+      this.Articles.state.articles = await this.Articles.getFromLang(this.lang);
       this.Articles.state.loading = false;
     },
     async createArticle() {
-      const article = this.Article.create(
+      const article = await this.Article.create(
         this.i18n.locale.value,
         this.newArticle
       );
-      console.log(article);
+      await this.$router.push({
+        name: "ViewArticle",
+        params: {
+          key: article.article.key,
+          name: this.Article.formatName(article.name),
+        },
+      });
+    },
+    changeLocale(locale: string) {
+      this.$router.push({ name: "ArticleHome", params: { lang: locale } });
     },
   },
   watch: {
-    "i18n.locale.value"() {
+    lang(value: string) {
+      this.i18n.changeLocale(value);
       this.Articles.state.loading = true;
       this.getArticles();
     },
@@ -102,6 +147,10 @@ export default defineComponent({
   .section-title {
     margin-top: 20px;
     font-size: 1.5rem;
+  }
+  .flag-icon {
+    margin-left: 5px;
+    cursor: pointer;
   }
 
   section {

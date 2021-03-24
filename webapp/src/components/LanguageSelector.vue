@@ -2,7 +2,7 @@
   <div class="language-selector">
     <div v-for="lang in state.languages" :key="lang" class="lang-icon">
       <span
-        :class="['flag-icon', `flag-icon-${mapLang[lang]}`]"
+        :class="['flag-icon', `flag-icon-${i18n.flags[lang]}`]"
         @click="i18n.changeLocale(lang)"
       ></span>
     </div>
@@ -28,10 +28,6 @@ export default defineComponent({
     return {
       i18n,
       state,
-      mapLang: {
-        fr: "fr",
-        en: "us",
-      },
     };
   },
 });

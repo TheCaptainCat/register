@@ -8,9 +8,6 @@
       </div>
       <div class="flex-grow-1" />
       <div>
-        <language-selector />
-      </div>
-      <div>
         <reg-button
           size="mini"
           :loading="state.loggingOut"
@@ -27,7 +24,6 @@
 <script lang="ts">
 import { defineComponent, reactive } from "vue";
 import { useI18n } from "@/plugins/i18n";
-import { LanguageSelector } from "@/components";
 import RegButton from "@/components/forms/Button.vue";
 import { useUser } from "@/composition/user";
 
@@ -37,7 +33,7 @@ interface NavBarState {
 
 export default defineComponent({
   name: "NavBar",
-  components: { LanguageSelector, RegButton },
+  components: { RegButton },
   setup() {
     const state = reactive<NavBarState>({ loggingOut: false });
     const i18n = useI18n();

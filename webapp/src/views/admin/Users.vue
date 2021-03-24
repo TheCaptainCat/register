@@ -4,7 +4,7 @@
     <h1 class="table-title">
       {{ i18n.t("views.admin.users.title") }}
     </h1>
-    <data-table :columns="tableColumns" :items="usersState.users">
+    <data-table :columns="tableColumns" :items="Users.state.users">
       <template v-slot:body="{ items }">
         <tr
           v-for="user in items"
@@ -83,56 +83,25 @@ export default defineComponent({
       selectedUser: null,
       selectedRole: null,
     });
-    const { state: usersState, getUsers } = useUsers();
-    const {
-      state: rolesState,
-      getRoles,
-      addRoleToUser,
-      removeRoleFromUser,
-    } = useRoles();
-    Promise.all([getUsers(), getRoles()]).then((value) => {
-      usersState.users = value[0];
-      rolesState.roles = value[1];
+    const Users = useUsers();
+    const Roles = useRoles();
+    Promise.all([Users.getUsers(), Roles.getRoles()]).then((value) => {
+      Users.state.users = value[0];
+      Roles.state.roles = value[1];
       state.loading = false;
     });
-    const updateSelectedUser = (user: User) => {
-      const newUserList = [];
-      for (const u of usersState.users) {
-        if (u.username === user.username) {
-          newUserList.push(user);
-        } else {
-          newUserList.push(u);
-        }
-      }
-      usersState.users = newUserList;
-      state.selectedUser = user;
-    };
-    const addRole = async (role: string, user: User) => {
-      const filter = rolesState.roles.filter((r) => r.name === role);
-      if (filter.length > 0) {
-        const f_role = filter[0];
-        const r_user = await addRoleToUser(f_role, user);
-        updateSelectedUser(r_user);
-      }
-    };
-    const removeRole = async (role: Role, user: User) => {
-      const r_user = await removeRoleFromUser(role, user);
-      updateSelectedUser(r_user);
-    };
     return {
       i18n,
       state,
-      usersState,
-      rolesState,
-      addRole,
-      removeRole,
+      Users,
+      Roles,
     };
   },
   computed: {
     selectRoleOptions(): { key: string; label: string; value: Role }[] {
       if (!this.state.selectedUser) return [];
       const userRoles = this.state.selectedUser.roles.map((r) => r.name);
-      return this.rolesState.roles
+      return this.Roles.state.roles
         .filter((r) => !userRoles.includes(r.name))
         .map((r) => ({
           key: r.name,
@@ -160,6 +129,30 @@ export default defineComponent({
   methods: {
     clickUserLine(user: User) {
       this.state.selectedUser = user;
+    },
+    updateSelectedUser(user: User) {
+      const newUserList = [];
+      for (const u of this.Users.state.users) {
+        if (u.username === user.username) {
+          newUserList.push(user);
+        } else {
+          newUserList.push(u);
+        }
+      }
+      this.Users.state.users = newUserList;
+      this.state.selectedUser = user;
+    },
+    async addRole(role: string, user: User) {
+      const filter = this.Roles.state.roles.filter((r) => r.name === role);
+      if (filter.length > 0) {
+        const f_role = filter[0];
+        const r_user = await this.Roles.addRoleToUser(f_role, user);
+        this.updateSelectedUser(r_user);
+      }
+    },
+    async removeRole(role: Role, user: User) {
+      const r_user = await this.Roles.removeRoleFromUser(role, user);
+      this.updateSelectedUser(r_user);
     },
   },
 });

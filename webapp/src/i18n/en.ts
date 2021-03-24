@@ -41,6 +41,7 @@ const en = {
         empty: "No article found in this language",
         create: "Create an article",
       },
+      change_locale: "Change language",
     },
     admin: {
       users: {
@@ -53,6 +54,13 @@ const en = {
         add_role: "Add",
         new_role: "Add role",
       },
+    },
+    article: {
+      created: "created by {name} on {date}",
+      updated: "updated by {name} on {date}",
+      no_page: "This article does not exist in this language",
+      no_content: "This article is empty",
+      not_found: "This article does not exist",
     },
   },
   api: {

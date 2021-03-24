@@ -48,7 +48,7 @@ export default defineComponent({
   name: "App",
   components: { Loading, Login, Error, MainPart: Main },
   setup() {
-    provideI18n("en", buildI18nStrings({ en, fr }));
+    provideI18n("en", buildI18nStrings({ en, fr }), { fr: "fr", en: "us" });
     const state = reactive<AppState>({
       loading: true,
       error: false,
