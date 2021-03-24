@@ -23,26 +23,24 @@ class Page(core.Model):
         versions = sorted(self.versions, key=lambda v: v.created_on, reverse=True)
         return versions[0]
 
-    @classmethod
-    def payloads(cls):
+    def payloads(self):
         yield 'new', [
-            mapping.Column(cls.name, required=True),
+            mapping.Column(self.name, required=True),
             mapping.Field(types.db.String, key='content')
         ]
 
-    @classmethod
-    def responses(cls):
-        base = cls.get_mixin('historized').response(cls)
+    def responses(self):
+        base = self.get_mixin('historized').response(self)
         yield [
-            mapping.Column(cls.name)
+            mapping.Column(self.name)
         ]
         yield "list", [
-            mapping.Column(cls.name),
+            mapping.Column(self.name),
             mapping.Field(types.db.String, name='language', function=lambda x: x.language.name),
-            mapping.Field(types.db.Integer, name='article', function=lambda x: x.article.id)
+            mapping.Field(types.db.Integer, name='article', function=lambda x: x.article.key)
         ]
         yield 'complete', [
-            mapping.Column(cls.name),
+            mapping.Column(self.name),
             mapping.Field(types.db.Integer, name='version_count', function=lambda page: len(page.versions)),
             mapping.Definition('version', key='last_version'),
             mapping.Definition('article', 'from_page', key='article')

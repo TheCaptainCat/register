@@ -131,9 +131,7 @@ export default defineComponent({
   computed: {
     selectRoleOptions(): { key: string; label: string; value: Role }[] {
       if (!this.state.selectedUser) return [];
-      const userRoles = (this.state.selectedUser.roles || []).map(
-        (r) => r.name
-      );
+      const userRoles = this.state.selectedUser.roles.map((r) => r.name);
       return this.rolesState.roles
         .filter((r) => !userRoles.includes(r.name))
         .map((r) => ({

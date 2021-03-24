@@ -36,6 +36,11 @@ const fr = {
         title: "Administration du Registre",
         manage_users: "Gérer les sorciers accrédités",
       },
+      articles: {
+        title: "Liste des articles",
+        empty: "Aucun article n'existe dans ce langage",
+        create: "Créer un article",
+      },
     },
     admin: {
       users: {

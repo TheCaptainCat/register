@@ -12,9 +12,8 @@ class Version(core.Model):
     page = types.defs.Relationship('page', foreign_key=page_id,
                                    backref=types.defs.Backref('versions', lazy=False), lazy=True)
 
-    @classmethod
-    def responses(cls):
-        base = cls.get_mixin('historized').response(cls)
+    def responses(self):
+        base = self.get_mixin('historized').response(self)
         yield [
-            mapping.Column(cls.content)
+            mapping.Column(self.content)
         ] + base

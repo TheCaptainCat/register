@@ -21,6 +21,9 @@ class PageController(web.Controller):
 
     @get('/{lang}', returns=web.Returns('page', 'list', as_list=True))
     async def get_by_language(self, match):
+        """
+        Gets all pages associated with a language
+        """
         lang = await self.language_service.get_by_name(match['lang'])
         return self.response.ok(data=await self.page_service.get_by_language(lang))
 
@@ -29,6 +32,9 @@ class PageController(web.Controller):
     @post(r'/{lang}/{article:\d+}', middlewares=['auth|roles=creator'],
           expects=web.Expects('page', 'new'), returns=web.Returns('page', 'complete'))
     async def create_page(self, payload, match, current_user):
+        """
+        Creates a new page, with a new article if no article id is given
+        """
         language = await self.language_service.get_by_name(match['lang'])
         article_id = match.get('article')
         article = None
@@ -41,12 +47,18 @@ class PageController(web.Controller):
     @get(r'/{lang}/{article:\d+}', middlewares=['auth'],
          returns=web.Returns('page', 'complete'))
     async def get_page(self, match):
+        """
+        Gets a page associated with a language from an article
+        """
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         return self.response.ok(data=await self.page_service.get_one_by_article_language(article, language))
 
     @get(r'/{lang}/{article:\d+}/content', middlewares=['auth'])
     async def get_page_content(self, match):
+        """
+        Get the parsed content of a page
+        """
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
@@ -55,6 +67,9 @@ class PageController(web.Controller):
     @patch(r'/{lang}/{article:\d+}', middlewares=['auth|roles=creator'],
            expects=web.Expects('page', 'new', patch=True), returns=web.Returns('page', 'complete'))
     async def update_page(self, match, payload, current_user):
+        """
+        Updates a page, or publishes a new page version
+        """
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
@@ -68,6 +83,9 @@ class PageController(web.Controller):
     @get(r'/{lang}/{article:\d+}/versions', middlewares=['auth'],
          returns=web.Returns('version', 'default', as_list=True))
     async def get_page_versions(self, match):
+        """
+        Gets the last version of a page
+        """
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
@@ -76,6 +94,9 @@ class PageController(web.Controller):
     @get(r'/{lang}/{article:\d+}/versions/{version:\d+}', middlewares=['auth'],
          returns=web.Returns('version'))
     async def get_page_version(self, match):
+        """
+        Gets a specific page version
+        """
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get(match['article'])
         version_index = int(match['version'])

@@ -5,20 +5,20 @@ from bolinette.decorators import model, with_mixin
 @model('article')
 @with_mixin('historized')
 class Article(core.Model):
-    id = types.defs.Column(types.db.Integer, primary_key=True, model_id=True)
+    id = types.defs.Column(types.db.Integer, primary_key=True)
+    key = types.defs.Column(types.db.String, nullable=False, unique=True, model_id=True)
 
-    @classmethod
-    def responses(cls):
-        base = cls.get_mixin('historized').response(cls)
+    def responses(self):
+        base = self.get_mixin('historized').response(self)
         yield [
-            mapping.Column(cls.id)
+            mapping.Column(self.key)
         ]
         yield "from_page", [
-            mapping.Column(cls.id),
+            mapping.Column(self.key),
             mapping.Field(types.db.String, name='languages',
                           function=lambda a: [p.language.name for p in a.pages])
         ]
         yield "complete", [
-            mapping.Column(cls.id),
+            mapping.Column(self.key),
             mapping.List(mapping.Definition('page'), key='pages')
         ] + base

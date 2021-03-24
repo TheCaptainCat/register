@@ -8,15 +8,13 @@ class Language(core.Model):
     name = types.defs.Column(types.db.String, nullable=False, unique=True, model_id=True)
     default = types.defs.Column(types.db.Boolean, nullable=False, default=False)
 
-    @classmethod
-    def payloads(cls):
+    def payloads(self):
         yield [
-            mapping.Column(cls.name, required=True)
+            mapping.Column(self.name, required=True)
         ]
 
-    @classmethod
-    def responses(cls):
+    def responses(self):
         yield [
-            mapping.Column(cls.name),
-            mapping.Column(cls.default)
+            mapping.Column(self.name),
+            mapping.Column(self.default)
         ]

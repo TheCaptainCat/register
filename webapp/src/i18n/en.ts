@@ -36,6 +36,11 @@ const en = {
         title: "Register administration",
         manage_users: "Manage accredited sorcerers",
       },
+      articles: {
+        title: "List of articles",
+        empty: "No article found in this language",
+        create: "Create an article",
+      },
     },
     admin: {
       users: {
