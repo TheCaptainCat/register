@@ -22,7 +22,10 @@
         {{ i18n.t("views.login.btn") }}
       </reg-button>
     </reg-form>
-    <LanguageSelector class="language-selector" />
+    <LanguageSelector
+      class="language-selector"
+      @updated:locale="(locale) => i18n.changeLocale(locale)"
+    />
   </reg-card>
 </template>
 

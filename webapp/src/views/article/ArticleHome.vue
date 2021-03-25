@@ -1,33 +1,32 @@
 <template>
   <div class="home-page">
-    <h1 class="main-title">{{ i18n.t("views.home.welcome") }}</h1>
+    <h1 class="main-title flex">{{ i18n.t("views.home.welcome") }}</h1>
     <h2 class="main-subtitle">{{ i18n.t("views.home.private") }}</h2>
     <reg-section
       v-if="hasRole('admin')"
       :title="i18n.t('views.home.admin.title')"
       color="red"
-      background="white"
+      :background="'white'"
     >
       <in-link :to="{ name: 'AdminUserList' }">
         {{ i18n.t("views.home.admin.manage_users") }}
       </in-link>
     </reg-section>
-    <h2 class="section-title flex">
-      {{ i18n.t("views.home.change_locale") }}
-      <span
-        v-for="language in availableLanguages"
-        :key="language"
-        :class="['flag-icon', `flag-icon-${i18n.flags[language]}`]"
-        @click="changeLocale(language)"
-      ></span>
-    </h2>
+    <language-selector
+      class="lang-selector"
+      :prefix="i18n.t('views.home.change_locale')"
+      :languages="availableLanguages"
+      :size="1"
+      @updated:locale="changeLocale"
+    />
     <h2 class="section-title flex">
       {{ i18n.t("views.home.articles.title") }}
       <span class="flex-grow-1" />
-      <reg-input name="new-article" v-model="newArticle" />
-      <reg-button v-if="hasRole('creator')" @click="createArticle">
-        {{ i18n.t("views.home.articles.create") }}
-      </reg-button>
+      <router-link :to="{ name: 'CreateArticle', params: { lang } }">
+        <reg-button v-if="hasRole('creator')">
+          {{ i18n.t("views.home.articles.create") }}
+        </reg-button>
+      </router-link>
     </h2>
     <loading v-if="Articles.state.loading" />
     <h3 v-else-if="Articles.state.articles.length <= 0">
@@ -61,11 +60,11 @@ import { useUser } from "@/composition/user";
 import { PartialArticle, useArticle, useArticles } from "@/composition/article";
 import Loading from "@/views/main/Loading.vue";
 import RegButton from "@/components/forms/Button.vue";
-import RegInput from "@/components/forms/Input.vue";
+import LanguageSelector from "@/components/LanguageSelector.vue";
 
 export default defineComponent({
   name: "ArticleHome",
-  components: { RegInput, RegButton, Loading, RegSection, InLink },
+  components: { LanguageSelector, RegButton, Loading, RegSection, InLink },
   props: {
     lang: { type: String, required: true },
   },
@@ -77,11 +76,6 @@ export default defineComponent({
       hasRole,
       Article: useArticle(),
       Articles: useArticles(),
-    };
-  },
-  data() {
-    return {
-      newArticle: "",
     };
   },
   mounted() {
@@ -105,19 +99,6 @@ export default defineComponent({
     async getArticles() {
       this.Articles.state.articles = await this.Articles.getFromLang(this.lang);
       this.Articles.state.loading = false;
-    },
-    async createArticle() {
-      const article = await this.Article.create(
-        this.i18n.locale.value,
-        this.newArticle
-      );
-      await this.$router.push({
-        name: "ViewArticle",
-        params: {
-          key: article.article.key,
-          name: this.Article.formatName(article.name),
-        },
-      });
     },
     changeLocale(locale: string) {
       this.$router.push({ name: "ArticleHome", params: { lang: locale } });
@@ -145,14 +126,16 @@ export default defineComponent({
     opacity: 0.75;
   }
   .section-title {
-    margin-top: 20px;
+    margin-top: 15px;
     font-size: 1.5rem;
   }
   .flag-icon {
     margin-left: 5px;
     cursor: pointer;
   }
-
+  .language-selector {
+    margin-top: 15px;
+  }
   section {
     margin-top: 30px;
   }

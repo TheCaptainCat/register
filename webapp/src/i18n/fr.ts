@@ -61,6 +61,14 @@ const fr = {
       no_page: "Cet article n'existe pas dans cette langue",
       no_content: "Cet article est vide",
       not_found: "Cet article n'existe pas",
+      edit: "Éditer",
+      editor: "Section éditeur",
+      translate: "Traduire cette page",
+    },
+    create_article: {
+      title: "Création d'une nouvelle page",
+      placeholder: "Nom de la page",
+      btn: "Créer",
     },
   },
   api: {

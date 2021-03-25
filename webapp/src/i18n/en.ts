@@ -61,6 +61,14 @@ const en = {
       no_page: "This article does not exist in this language",
       no_content: "This article is empty",
       not_found: "This article does not exist",
+      edit: "Edit",
+      editor: "Editor section",
+      translate: "Translate this page",
+    },
+    create_article: {
+      title: "Create a new page",
+      placeholder: "Page's name",
+      btn: "Create",
     },
   },
   api: {

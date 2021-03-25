@@ -54,6 +54,7 @@ export default defineComponent({
 
   .section-inner {
     margin: 25px 15px 15px 15px;
+    display: flex;
   }
 }
 </style>

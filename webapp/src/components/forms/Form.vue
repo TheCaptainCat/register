@@ -1,5 +1,5 @@
 <template>
-  <div :id="`reg-form-${uid}`" class="reg-form-container">
+  <div :id="`reg-form-${uid}`" class="reg-form-container" :class="{ inline }">
     <slot />
   </div>
 </template>
@@ -9,6 +9,9 @@ import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "RegForm",
+  props: {
+    inline: { type: Boolean, default: false },
+  },
   mounted() {
     const elem = document.getElementById(`reg-form-${this.uid}`);
     if (elem) elem.addEventListener("keyup", this.submit);
@@ -29,3 +32,22 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.reg-form-container {
+  width: 100%;
+  display: flex;
+  &.inline {
+    flex-direction: row;
+    ::v-deep .reg-form:not(:last-child) {
+      margin-right: 5px;
+    }
+  }
+  &:not(.inline) {
+    flex-direction: column;
+    ::v-deep .reg-form:not(:last-child) {
+      margin-bottom: 15px;
+    }
+  }
+}
+</style>

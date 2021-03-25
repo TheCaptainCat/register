@@ -37,3 +37,5 @@ async def dev_register_seeder(context: 'blnt.BolinetteContext'):
         async with blnt.Transaction(context):
             await language_service.create({'name': 'fr', 'default': True})
             await language_service.create({'name': 'en', 'default': False})
+            await language_service.create({'name': 'es', 'default': False})
+            await language_service.create({'name': 'it', 'default': False})

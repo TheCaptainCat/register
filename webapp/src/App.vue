@@ -21,6 +21,8 @@ import { useUser, userStore } from "@/composition/user";
 import { FetchError } from "@/core/requests";
 import fr from "@/i18n/fr";
 import en from "@/i18n/en";
+import es from "@/i18n/es";
+import it from "@/i18n/it";
 
 import Login from "@/views/main/Login.vue";
 import Loading from "@/views/main/Loading.vue";
@@ -48,7 +50,12 @@ export default defineComponent({
   name: "App",
   components: { Loading, Login, Error, MainPart: Main },
   setup() {
-    provideI18n("en", buildI18nStrings({ en, fr }), { fr: "fr", en: "us" });
+    provideI18n("en", buildI18nStrings({ en, fr, es, it }), {
+      fr: "fr",
+      en: "gb",
+      es: "es",
+      it: "it",
+    });
     const state = reactive<AppState>({
       loading: true,
       error: false,

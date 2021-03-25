@@ -1,26 +1,14 @@
 <template>
   <loading v-if="loading" />
-  <div v-else-if="notFound && availableLanguages.length" class="no-page">
+  <div v-else-if="notFound && availableLanguagesKeys.length" class="no-page">
     <h1>{{ i18n.t("views.article.no_page") }}</h1>
-    <div class="change-locale">
-      {{ i18n.t("views.home.change_locale") }}
-      <router-link
-        v-for="language in availableLanguages"
-        :key="language.lang"
-        :to="{
-          name: 'ViewArticle',
-          params: {
-            lang: language.lang,
-            article: articleKey,
-            name: Article.formatName(language.name),
-          },
-        }"
-      >
-        <span
-          :class="['flag-icon', `flag-icon-${i18n.flags[language.lang]}`]"
-        />
-      </router-link>
-    </div>
+    <language-selector
+      :prefix="i18n.t('views.home.change_locale')"
+      :languages="availableLanguagesKeys"
+      @updated:locale="
+        (locale) => reloadPage(locale, availableLanguages[locale], edit)
+      "
+    />
   </div>
   <div v-else-if="notFound" class="flex aic jcc not-found">
     <h1>{{ i18n.t("views.article.not_found") }}</h1>
@@ -42,6 +30,32 @@
         })
       }}
     </h2>
+    <language-selector
+      v-if="availableLanguagesKeys.length"
+      :prefix="i18n.t('views.home.change_locale')"
+      :languages="availableLanguagesKeys"
+      :size="1"
+      @updated:locale="
+        (locale) => reloadPage(locale, availableLanguages[locale], edit)
+      "
+    />
+    <reg-section
+      v-if="!edit && hasRole('creator')"
+      :title="i18n.t('views.article.editor')"
+      :background="'white'"
+    >
+      <reg-button icon="pencil" @click="toggleEditMode">
+        {{ i18n.t("views.article.edit") }}
+      </reg-button>
+      <div class="flex-grow-1" />
+      <language-selector
+        v-if="translatablePages.length"
+        :prefix="i18n.t('views.article.translate')"
+        :languages="translatablePages"
+        :size="1"
+        @updated:locale="() => {}"
+      />
+    </reg-section>
     <div v-if="!hasContent" class="no-page">
       <h1>{{ i18n.t("views.article.no_content") }}</h1>
     </div>
@@ -50,26 +64,34 @@
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import { RouteLocationRaw } from "vue-router";
 import { Article, useArticle, useArticles } from "@/composition/article";
 import { useI18n } from "@/plugins/i18n";
-import Loading from "@/views/main/Loading.vue";
 import { FetchError } from "@/core/requests";
+import { useUser } from "@/composition/user";
+import RegButton from "@/components/forms/Button.vue";
+import LanguageSelector from "@/components/LanguageSelector.vue";
+import RegSection from "@/components/containers/Section.vue";
+import Loading from "@/views/main/Loading.vue";
 
 export default defineComponent({
   name: "ViewArticle",
-  components: { Loading },
+  components: { RegSection, LanguageSelector, RegButton, Loading },
   props: {
     lang: { type: String, required: true },
     articleKey: { type: String, required: true },
+    edit: { type: Boolean, default: false },
   },
   setup() {
     const i18n = useI18n();
     const Article = useArticle();
     const Articles = useArticles();
+    const { hasRole } = useUser();
     return {
       i18n,
       Article,
       Articles,
+      hasRole,
     };
   },
   data(): ViewArticleData {
@@ -83,7 +105,7 @@ export default defineComponent({
       },
       loading: true,
       notFound: false,
-      availableLanguages: [],
+      availableLanguages: {},
       article: null,
     };
   },
@@ -98,29 +120,40 @@ export default defineComponent({
       }
       return false;
     },
+    availableLanguagesKeys(): string[] {
+      return Object.keys(this.availableLanguages);
+    },
+    translatablePages(): string[] {
+      const pages = [];
+      for (const lang in this.i18n.messages) {
+        if (lang !== this.lang && !this.availableLanguagesKeys.includes(lang))
+          pages.push(lang);
+      }
+      return pages;
+    },
   },
   methods: {
     async fetchArticle() {
       this.loading = true;
       try {
         this.article = await this.Article.get(this.lang, this.articleKey);
+        let availableLanguages: Record<string, string> = {};
+        for (const lang in this.article.article.languages) {
+          if (lang !== this.lang)
+            availableLanguages[lang] = this.article.article.languages[lang];
+        }
+        this.availableLanguages = availableLanguages;
         this.notFound = false;
         this.loading = false;
       } catch (err) {
         if (err instanceof FetchError && err.code === 404) {
           this.notFound = true;
           try {
-            const availableLanguages = await this.Articles.getAvailableLanguages(
+            this.availableLanguages = await this.Articles.getAvailableLanguages(
               this.articleKey
             );
-            this.availableLanguages = Object.keys(availableLanguages).map(
-              (lang) => ({
-                lang,
-                name: availableLanguages[lang],
-              })
-            );
           } catch (err) {
-            this.availableLanguages = [];
+            this.availableLanguages = {};
           }
           this.loading = false;
         } else {
@@ -133,15 +166,21 @@ export default defineComponent({
         new Date(date + "Z")
       );
     },
-    changeLocale(locale: string, name: string) {
-      this.$router.push({
+    async toggleEditMode() {
+      if (!this.article) return;
+      await this.reloadPage(this.lang, this.article.name, !this.edit);
+    },
+    async reloadPage(locale: string, name: string, edit: boolean) {
+      const options: RouteLocationRaw = {
         name: "ViewArticle",
         params: {
           lang: locale,
           article: this.articleKey,
           name: this.Article.formatName(name),
         },
-      });
+      };
+      if (edit) options.query = { edit: "1" };
+      await this.$router.push(options);
     },
   },
   watch: {
@@ -156,7 +195,7 @@ interface ViewArticleData {
   dateOptions: Record<string, string>;
   loading: boolean;
   notFound: boolean;
-  availableLanguages: { lang: string; name: string }[];
+  availableLanguages: Record<string, string>;
   article: Article | null;
 }
 </script>

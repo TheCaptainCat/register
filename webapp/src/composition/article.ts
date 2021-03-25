@@ -17,7 +17,7 @@ interface Version extends Historized {
 
 interface Article extends Historized {
   name: string;
-  article: { key: string; languages: string[] };
+  article: { key: string; languages: Record<string, string> };
   last_version: Version | null;
 }
 

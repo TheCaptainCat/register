@@ -16,7 +16,7 @@ class Article(core.Model):
         yield "from_page", [
             mapping.Column(self.key),
             mapping.Field(types.db.String, name='languages',
-                          function=lambda a: [p.language.name for p in a.pages])
+                          function=lambda a: dict(((p.language.name, p.name) for p in a.pages)))
         ]
         yield "complete", [
             mapping.Column(self.key),
