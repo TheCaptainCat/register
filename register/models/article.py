@@ -1,9 +1,8 @@
 from bolinette import mapping, types, core
-from bolinette.decorators import model, with_mixin
+from bolinette.decorators import model
 
 
-@model('article')
-@with_mixin('historized')
+@model('article', mixins=['historized'])
 class Article(core.Model):
     id = types.defs.Column(types.db.Integer, primary_key=True)
     key = types.defs.Column(types.db.String, nullable=False, unique=True, model_id=True)

@@ -6,7 +6,7 @@ from register.markup import Parser
 
 
 @service('page')
-class PageService(core.HistorizedService):
+class PageService(core.Service):
     def __init__(self, context: 'blnt.BolinetteContext'):
         super().__init__(context)
 

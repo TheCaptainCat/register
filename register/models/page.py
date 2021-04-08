@@ -1,9 +1,8 @@
 from bolinette import types, core, mapping
-from bolinette.decorators import model, with_mixin, model_property
+from bolinette.decorators import model, model_property
 
 
-@model('page')
-@with_mixin('historized')
+@model('page', mixins=['historized'])
 class Page(core.Model):
     id = types.defs.Column(types.db.Integer, primary_key=True, model_id=True)
     name = types.defs.Column(types.db.String, nullable=False)

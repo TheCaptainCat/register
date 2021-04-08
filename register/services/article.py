@@ -6,7 +6,7 @@ from bolinette.decorators import service
 
 
 @service('article')
-class ArticleService(core.HistorizedService):
+class ArticleService(core.Service):
     def __init__(self, context: 'blnt.BolinetteContext'):
         super().__init__(context)
 
