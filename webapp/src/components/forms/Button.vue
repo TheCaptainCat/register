@@ -2,7 +2,7 @@
   <div class="reg-form reg-btn-container">
     <el-button
       class="reg-btn"
-      type="primary"
+      :type="type"
       :loading="loading"
       :disabled="disabled"
       :size="size"
@@ -26,6 +26,10 @@ export default defineComponent({
     size: {
       type: String as PropType<"medium" | "small" | "mini">,
       default: "medium",
+    },
+    type: {
+      type: String as PropType<"primary" | "success">,
+      default: "primary",
     },
     icon: String,
     light: {

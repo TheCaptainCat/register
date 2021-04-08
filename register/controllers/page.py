@@ -39,7 +39,7 @@ class PageController(web.Controller):
         article_id = match.get('article')
         article = None
         if article_id:
-            article = await self.article_service.get(article_id)
+            article = await self.article_service.get_by_key(article_id)
         return self.response.created(
             messages='page.created', data=await self.page_service.add_version(
                 payload['name'], payload['content'], article, language, current_user))
@@ -60,7 +60,7 @@ class PageController(web.Controller):
         Get the parsed content of a page
         """
         language = await self.language_service.get_by_name(match['lang'])
-        article = await self.article_service.get(match['article'])
+        article = await self.article_service.get_by_key(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
         return self.response.ok(data=await self.page_service.get_parsed_content(page))
 
@@ -71,7 +71,7 @@ class PageController(web.Controller):
         Updates a page, or publishes a new page version
         """
         language = await self.language_service.get_by_name(match['lang'])
-        article = await self.article_service.get(match['article'])
+        article = await self.article_service.get_by_key(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
         await self.page_service.add_version(page.name, payload.get('content'), article, language, current_user)
         values = {}
@@ -87,9 +87,9 @@ class PageController(web.Controller):
         Gets the last version of a page
         """
         language = await self.language_service.get_by_name(match['lang'])
-        article = await self.article_service.get(match['article'])
+        article = await self.article_service.get_by_key(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
-        return self.response.ok(messages=sorted(page.versions, key=lambda v: v.created_on))
+        return self.response.ok(data=sorted(page.versions, key=lambda v: v.created_on))
 
     @get('/{lang}/{article}/versions/{version}', middlewares=['auth'],
          returns=web.Returns('version'))
@@ -98,7 +98,7 @@ class PageController(web.Controller):
         Gets a specific page version
         """
         language = await self.language_service.get_by_name(match['lang'])
-        article = await self.article_service.get(match['article'])
+        article = await self.article_service.get_by_key(match['article'])
         version_index = int(match['version'])
         page = await self.page_service.get_one_by_article_language(article, language)
         versions = sorted(page.versions, key=lambda v: v.created_on)

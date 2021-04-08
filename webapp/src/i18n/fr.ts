@@ -2,6 +2,10 @@ const fr = {
   app: {
     title: "Le Registre",
   },
+  global: {
+    cancel: "Annuler",
+    save: "Sauvegarder",
+  },
   components: {
     loader: {
       text: "Nous contactons le Registre",

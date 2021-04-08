@@ -2,6 +2,10 @@ const en = {
   app: {
     title: "The Register",
   },
+  global: {
+    cancel: "Cancel",
+    save: "Save",
+  },
   components: {
     loader: {
       text: "We are reaching the Register",

@@ -1,1 +1,1 @@
-bolinette==0.8.3
+bolinette==0.8.4

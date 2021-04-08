@@ -18,6 +18,7 @@ const articleRoutes: Array<RouteRecordRaw> = [
     component: CreateArticle,
     props: (route: RouteLocationNormalized) => ({
       lang: route.params.lang,
+      linkTo: route.query.linkTo,
     }),
   },
   {

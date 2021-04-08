@@ -1,8 +1,13 @@
 <template>
-  <div class="reg-form reg-input-container" :class="{ fluid: fluid }">
+  <div class="reg-form reg-input-container">
     <label>
       <div class="reg-input-label">{{ label }}</div>
-      <el-input v-model="val" :placeholder="placeholder" />
+      <el-input
+        type="textarea"
+        v-model="val"
+        :placeholder="placeholder"
+        :autosize="autosize"
+      />
     </label>
     <div v-if="error" class="reg-input-error">
       {{ error }}
@@ -11,10 +16,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, computed } from "vue";
+import { computed, defineComponent, PropType, ref, watch } from "vue";
 
 export default defineComponent({
-  name: "RegInput",
+  name: "RegTextArea",
   props: {
     type: {
       type: String,
@@ -34,6 +39,9 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    dimensions: {
+      type: Object as PropType<{ min?: number; max?: number }>,
+    },
   },
   setup(props, context) {
     const val = ref<string | undefined>(props.modelValue);
@@ -52,22 +60,16 @@ export default defineComponent({
       hasValue,
     };
   },
+  computed: {
+    autosize() {
+      if (!this.dimensions) return {};
+      let size: { minRows?: number; maxRows?: number } = {};
+      if ("min" in this.dimensions) size.minRows = this.dimensions.min;
+      if ("max" in this.dimensions) size.maxRows = this.dimensions.max;
+      return size;
+    },
+  },
 });
 </script>
 
-<style lang="scss" scoped>
-.reg-input-container {
-  &.fluid {
-    width: 100%;
-  }
-
-  .reg-input-label {
-    font-weight: bold;
-    margin-bottom: 3px;
-  }
-
-  .reg-input-error {
-    color: red;
-  }
-}
-</style>
+<style lang="scss" scoped></style>

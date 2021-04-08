@@ -39,6 +39,7 @@ export default defineComponent({
   components: { RegForm, RegButton, RegInput, LanguageSelector },
   props: {
     lang: { type: String, required: true },
+    linkTo: { type: String },
   },
   setup() {
     const i18n = useI18n();

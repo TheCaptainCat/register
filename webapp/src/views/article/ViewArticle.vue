@@ -13,6 +13,24 @@
   <div v-else-if="notFound" class="flex aic jcc not-found">
     <h1>{{ i18n.t("views.article.not_found") }}</h1>
   </div>
+  <div v-else-if="edit" class="a-view">
+    <h1 class="a-title">{{ article.name }}</h1>
+    <div class="a-edit-controls flex">
+      <reg-button @click="toggleEditMode">
+        {{ i18n.t("global.cancel") }}
+      </reg-button>
+      <div class="flex-grow-1" />
+      <reg-button type="success" @click="saveArticleEdits">
+        {{ i18n.t("global.save") }}
+      </reg-button>
+    </div>
+    <reg-text-area
+      class="a-content-input"
+      name="content"
+      v-model="content"
+      :dimensions="{ min: 10 }"
+    />
+  </div>
   <div v-else class="a-view">
     <h1 class="a-title">{{ article.name }}</h1>
     <h2 class="a-credits">
@@ -53,11 +71,14 @@
         :prefix="i18n.t('views.article.translate')"
         :languages="translatablePages"
         :size="1"
-        @updated:locale="() => {}"
+        @updated:locale="translateArticle"
       />
     </reg-section>
     <div v-if="!hasContent" class="no-page">
       <h1>{{ i18n.t("views.article.no_content") }}</h1>
+    </div>
+    <div v-else class="a-content">
+      {{ article.last_version.content }}
     </div>
   </div>
 </template>
@@ -73,10 +94,11 @@ import RegButton from "@/components/forms/Button.vue";
 import LanguageSelector from "@/components/LanguageSelector.vue";
 import RegSection from "@/components/containers/Section.vue";
 import Loading from "@/views/main/Loading.vue";
+import RegTextArea from "@/components/forms/TextArea.vue";
 
 export default defineComponent({
   name: "ViewArticle",
-  components: { RegSection, LanguageSelector, RegButton, Loading },
+  components: { RegTextArea, RegSection, LanguageSelector, RegButton, Loading },
   props: {
     lang: { type: String, required: true },
     articleKey: { type: String, required: true },
@@ -107,6 +129,7 @@ export default defineComponent({
       notFound: false,
       availableLanguages: {},
       article: null,
+      content: "",
     };
   },
   mounted() {
@@ -168,6 +191,8 @@ export default defineComponent({
     },
     async toggleEditMode() {
       if (!this.article) return;
+      if (this.article.last_version)
+        this.content = this.article.last_version.content;
       await this.reloadPage(this.lang, this.article.name, !this.edit);
     },
     async reloadPage(locale: string, name: string, edit: boolean) {
@@ -181,6 +206,27 @@ export default defineComponent({
       };
       if (edit) options.query = { edit: "1" };
       await this.$router.push(options);
+    },
+    async translateArticle(lang: string) {
+      if (!this.article) return;
+      await this.$router.push({
+        name: "CreateArticle",
+        params: {
+          lang,
+        },
+        query: {
+          linkTo: this.article.article.key,
+        },
+      });
+    },
+    async saveArticleEdits() {
+      if (this.content.length <= 0 || !this.article) return;
+      this.article = await this.Article.update(
+        this.lang,
+        this.article,
+        this.content
+      );
+      await this.toggleEditMode();
     },
   },
   watch: {
@@ -197,6 +243,7 @@ interface ViewArticleData {
   notFound: boolean;
   availableLanguages: Record<string, string>;
   article: Article | null;
+  content: string;
 }
 </script>
 
@@ -208,6 +255,15 @@ interface ViewArticleData {
   .a-credits {
     font-size: 1rem;
     opacity: 0.5;
+  }
+  .a-edit-controls {
+    margin-top: 20px;
+  }
+  .a-content {
+    margin-top: 20px;
+  }
+  .a-content-input {
+    margin-top: 10px;
   }
 }
 .no-page {

@@ -41,6 +41,18 @@ const get = async (lang: string, article: string): Promise<Article> => {
   return res.data;
 };
 
+const update = async (
+  lang: string,
+  article: Article,
+  content: string
+): Promise<Article> => {
+  const res = await request.patch<{ content: string }, Article>(
+    `/page/${lang}/${article.article.key}`,
+    { content }
+  );
+  return res.data;
+};
+
 const formatName = (article: string): string => {
   return article
     .normalize("NFD")
@@ -53,15 +65,17 @@ const formatName = (article: string): string => {
 // USE ARTICLE
 
 interface UseArticleParams {
-  create: (lang: string, name: string) => Promise<Article>;
-  get: (lang: string, article: string) => Promise<Article>;
-  formatName: (article: string) => string;
+  create: typeof create;
+  get: typeof get;
+  update: typeof update;
+  formatName: typeof formatName;
 }
 
 const useArticle = (): UseArticleParams => {
   return {
     create,
     get,
+    update,
     formatName,
   };
 };
