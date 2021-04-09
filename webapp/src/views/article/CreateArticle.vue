@@ -1,6 +1,14 @@
 <template>
-  <div class="create-article">
-    <h1>{{ i18n.t("views.create_article.title") }}</h1>
+  <loading v-if="loading" />
+  <div v-else class="create-article">
+    <h1 v-if="!articles">{{ i18n.t("views.create_article.title") }}</h1>
+    <h1 v-else>{{ i18n.t("views.create_article.title_link") }}</h1>
+    <ul v-if="articles" class="linked-article">
+      <li v-for="a in Object.keys(articles)" :key="a">
+        <span :class="['flag-icon', `flag-icon-${i18n.flags[a]}`]" />
+        {{ articles[a] }}
+      </li>
+    </ul>
     <language-selector
       class="lang-selector"
       :prefix="i18n.t('views.home.change_locale')"
@@ -16,7 +24,7 @@
         v-model="fields.article.value"
         :error="fields.article.error"
       />
-      <reg-button :loading="state.loading" @click="createArticle">
+      <reg-button :loading="creating" @click="createArticle">
         {{ i18n.t("views.create_article.btn") }}
       </reg-button>
     </reg-form>
@@ -32,49 +40,70 @@ import LanguageSelector from "@/components/LanguageSelector.vue";
 import RegInput from "@/components/forms/Input.vue";
 import RegButton from "@/components/forms/Button.vue";
 import RegForm from "@/components/forms/Form.vue";
-import { useArticle } from "@/composition/article";
+import { useArticle, useArticles } from "@/composition/article";
+import Loading from "@/views/main/Loading.vue";
+import { RouteLocationRaw } from "vue-router";
 
 export default defineComponent({
   name: "CreateArticle",
-  components: { RegForm, RegButton, RegInput, LanguageSelector },
+  components: { Loading, RegForm, RegButton, RegInput, LanguageSelector },
   props: {
     lang: { type: String, required: true },
     linkTo: { type: String },
   },
   setup() {
     const i18n = useI18n();
-    const state = reactive({
-      loading: false,
-    });
     const { form, fields } = createForm();
     const Article = useArticle();
+    const Articles = useArticles();
     return {
       i18n,
-      state,
       form,
       fields,
       Article,
+      Articles,
     };
   },
-  mounted() {
+  data(): {
+    articles: Record<string, string> | null;
+    loading: boolean;
+    creating: boolean;
+  } {
+    return {
+      articles: null,
+      loading: true,
+      creating: false,
+    };
+  },
+  async mounted() {
     this.i18n.changeLocale(this.lang);
+    await this.loadLinkedArticles();
+    this.loading = false;
   },
   computed: {
     availableLanguages(): string[] {
       const lang = Object.keys(this.i18n.messages);
-      return lang.filter((l) => l !== this.lang);
+      return lang.filter(
+        (l) => l !== this.lang && (!this.articles || !(l in this.articles))
+      );
     },
   },
   methods: {
     changeLocale(locale: string) {
-      this.$router.push({ name: "CreateArticle", params: { lang: locale } });
+      const options: RouteLocationRaw = {
+        name: "CreateArticle",
+        params: { lang: locale },
+      };
+      if (this.linkTo) options.query = { linkTo: this.linkTo };
+      this.$router.push(options);
     },
     async createArticle() {
-      this.state.loading = true;
+      this.creating = true;
       if ((await this.form.validate()).valid) {
         const article = await this.Article.create(
           this.lang,
-          this.fields.article.value
+          this.fields.article.value,
+          this.linkTo
         );
         await this.$router.push({
           name: "ViewArticle",
@@ -88,7 +117,11 @@ export default defineComponent({
           },
         });
       }
-      this.state.loading = false;
+      this.creating = false;
+    },
+    async loadLinkedArticles() {
+      if (!this.linkTo) return;
+      this.articles = await this.Articles.getAvailableLanguages(this.linkTo);
     },
   },
   watch: {
@@ -121,6 +154,13 @@ const createForm = () => {
 
 <style lang="scss" scoped>
 .create-article {
+  .linked-article {
+    list-style: none;
+    padding: 0;
+    .flag-icon {
+      margin-right: 10px;
+    }
+  }
   .section-title {
     margin-top: 20px;
     font-size: 1.5rem;

@@ -13,24 +13,6 @@
   <div v-else-if="notFound" class="flex aic jcc not-found">
     <h1>{{ i18n.t("views.article.not_found") }}</h1>
   </div>
-  <div v-else-if="edit" class="a-view">
-    <h1 class="a-title">{{ article.name }}</h1>
-    <div class="a-edit-controls flex">
-      <reg-button @click="toggleEditMode">
-        {{ i18n.t("global.cancel") }}
-      </reg-button>
-      <div class="flex-grow-1" />
-      <reg-button type="success" @click="saveArticleEdits">
-        {{ i18n.t("global.save") }}
-      </reg-button>
-    </div>
-    <reg-text-area
-      class="a-content-input"
-      name="content"
-      v-model="content"
-      :dimensions="{ min: 10 }"
-    />
-  </div>
   <div v-else class="a-view">
     <h1 class="a-title">{{ article.name }}</h1>
     <h2 class="a-credits">
@@ -48,38 +30,61 @@
         })
       }}
     </h2>
-    <language-selector
-      v-if="availableLanguagesKeys.length"
-      :prefix="i18n.t('views.home.change_locale')"
-      :languages="availableLanguagesKeys"
-      :size="1"
-      @updated:locale="
-        (locale) => reloadPage(locale, availableLanguages[locale], edit)
-      "
-    />
-    <reg-section
-      v-if="!edit && hasRole('creator')"
-      :title="i18n.t('views.article.editor')"
-      :background="'white'"
-    >
-      <reg-button icon="pencil" @click="toggleEditMode">
-        {{ i18n.t("views.article.edit") }}
-      </reg-button>
-      <div class="flex-grow-1" />
-      <language-selector
-        v-if="translatablePages.length"
-        :prefix="i18n.t('views.article.translate')"
-        :languages="translatablePages"
-        :size="1"
-        @updated:locale="translateArticle"
+    <template v-if="edit">
+      <div class="a-edit-controls flex">
+        <reg-button @click="toggleEditMode">
+          {{ i18n.t("global.cancel") }}
+        </reg-button>
+        <div class="flex-grow-1" />
+        <reg-button type="success" @click="saveArticleEdits">
+          {{ i18n.t("global.save") }}
+        </reg-button>
+      </div>
+      <reg-text-area
+        class="a-content-input"
+        name="content"
+        v-model="content"
+        :dimensions="{ min: 10 }"
       />
-    </reg-section>
-    <div v-if="!hasContent" class="no-page">
-      <h1>{{ i18n.t("views.article.no_content") }}</h1>
-    </div>
-    <div v-else class="a-content">
-      {{ article.last_version.content }}
-    </div>
+    </template>
+    <template v-else>
+      <language-selector
+        class="select-lang"
+        v-if="availableLanguagesKeys.length"
+        :prefix="i18n.t('views.home.change_locale')"
+        :languages="availableLanguagesKeys"
+        :size="1"
+        @updated:locale="
+          (locale) => reloadPage(locale, availableLanguages[locale], edit)
+        "
+      />
+      <reg-section
+        v-if="!edit && hasRole('creator')"
+        :title="i18n.t('views.article.editor')"
+        :background="'white'"
+      >
+        <reg-button icon="pencil" @click="toggleEditMode">
+          {{ i18n.t("views.article.edit") }}
+        </reg-button>
+        <div class="flex-grow-1" />
+        <language-selector
+          v-if="translatablePages.length"
+          :prefix="i18n.t('views.article.translate')"
+          :languages="translatablePages"
+          :size="1"
+          @updated:locale="translateArticle"
+        />
+      </reg-section>
+      <div v-if="!hasContent" class="no-page">
+        <h1>{{ i18n.t("views.article.no_content") }}</h1>
+      </div>
+      <article-content
+        v-else
+        class="a-content"
+        :lang="lang"
+        :article="article"
+      />
+    </template>
   </div>
 </template>
 
@@ -95,10 +100,18 @@ import LanguageSelector from "@/components/LanguageSelector.vue";
 import RegSection from "@/components/containers/Section.vue";
 import Loading from "@/views/main/Loading.vue";
 import RegTextArea from "@/components/forms/TextArea.vue";
+import ArticleContent from "@/views/article/ArticleContent.vue";
 
 export default defineComponent({
   name: "ViewArticle",
-  components: { RegTextArea, RegSection, LanguageSelector, RegButton, Loading },
+  components: {
+    ArticleContent,
+    RegTextArea,
+    RegSection,
+    LanguageSelector,
+    RegButton,
+    Loading,
+  },
   props: {
     lang: { type: String, required: true },
     articleKey: { type: String, required: true },
@@ -166,6 +179,8 @@ export default defineComponent({
             availableLanguages[lang] = this.article.article.languages[lang];
         }
         this.availableLanguages = availableLanguages;
+        if (this.article.last_version)
+          this.content = this.article.last_version.content;
         this.notFound = false;
         this.loading = false;
       } catch (err) {
@@ -255,6 +270,9 @@ interface ViewArticleData {
   .a-credits {
     font-size: 1rem;
     opacity: 0.5;
+  }
+  .select-lang {
+    margin-top: 10px;
   }
   .a-edit-controls {
     margin-top: 20px;

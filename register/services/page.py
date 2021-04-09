@@ -1,8 +1,7 @@
+import markdown
 from bolinette import blnt, core
 from bolinette.decorators import service
 from bolinette.exceptions import NotFoundError
-
-from register.markup import Parser
 
 
 @service('page')
@@ -36,6 +35,4 @@ class PageService(core.Service):
         return page
 
     async def get_parsed_content(self, page):
-        parser = Parser()
-        tree = parser.parse(page.last_version.content)
-        return tree.to_dict()
+        return markdown.markdown(page.last_version.content)

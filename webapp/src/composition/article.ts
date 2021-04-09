@@ -29,8 +29,13 @@ interface PartialArticle {
 
 // ARTICLE METHODS
 
-const create = async (lang: string, name: string): Promise<Article> => {
-  const res = await request.post<{ name: string }, Article>(`/page/${lang}`, {
+const create = async (
+  lang: string,
+  name: string,
+  linkTo?: string
+): Promise<Article> => {
+  const path = linkTo ? `/page/${lang}/${linkTo}` : `/page/${lang}`;
+  const res = await request.post<{ name: string }, Article>(path, {
     name,
   });
   return res.data;
@@ -53,6 +58,13 @@ const update = async (
   return res.data;
 };
 
+const getContent = async (lang: string, article: Article): Promise<string> => {
+  const res = await request.get<string>(
+    `/page/${lang}/${article.article.key}/content`
+  );
+  return res.data;
+};
+
 const formatName = (article: string): string => {
   return article
     .normalize("NFD")
@@ -68,6 +80,7 @@ interface UseArticleParams {
   create: typeof create;
   get: typeof get;
   update: typeof update;
+  getContent: typeof getContent;
   formatName: typeof formatName;
 }
 
@@ -76,6 +89,7 @@ const useArticle = (): UseArticleParams => {
     create,
     get,
     update,
+    getContent,
     formatName,
   };
 };
@@ -105,8 +119,8 @@ interface ArticlesState {
 
 interface UseArticlesParams {
   state: ArticlesState;
-  getFromLang: (lang: string) => Promise<PartialArticle[]>;
-  getAvailableLanguages: (article: string) => Promise<Record<string, string>>;
+  getFromLang: typeof getFromLang;
+  getAvailableLanguages: typeof getAvailableLanguages;
 }
 
 const useArticles = (): UseArticlesParams => {

@@ -71,6 +71,7 @@ const fr = {
     },
     create_article: {
       title: "Création d'une nouvelle page",
+      title_link: "Traduire un article",
       placeholder: "Nom de la page",
       btn: "Créer",
     },

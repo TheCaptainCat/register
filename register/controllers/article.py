@@ -19,10 +19,7 @@ class ArticleController(web.Controller):
             self.defaults.get_all('complete', middlewares=['auth'])
         ]
 
-    @get('/a/{article}/languages', middlewares='auth')
+    @get('/a/{article}/languages', middlewares=['auth'])
     async def get_languages(self, match):
         article = await self.article_service.get_by_key(match['article'])
-        languages = {}
-        for page in article.pages:
-            languages[page.language.name] = page.name
-        return self.response.ok(data=languages)
+        return self.response.ok(data=dict(((page.language.name, page.name) for page in article.pages)))

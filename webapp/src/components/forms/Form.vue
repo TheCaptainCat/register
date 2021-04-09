@@ -39,13 +39,13 @@ export default defineComponent({
   display: flex;
   &.inline {
     flex-direction: row;
-    ::v-deep .reg-form:not(:last-child) {
+    :deep(.reg-form:not(:last-child)) {
       margin-right: 5px;
     }
   }
   &:not(.inline) {
     flex-direction: column;
-    ::v-deep .reg-form:not(:last-child) {
+    :deep(.reg-form:not(:last-child)) {
       margin-bottom: 15px;
     }
   }

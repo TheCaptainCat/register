@@ -38,7 +38,7 @@ export default defineComponent({
   position: relative;
   border: $grey-md solid 1px;
   border-radius: $border-radius;
-  margin-top: 20px;
+  margin-top: 30px;
 
   .section-heading {
     position: absolute;
