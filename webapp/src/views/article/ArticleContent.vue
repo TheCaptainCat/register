@@ -1,16 +1,19 @@
 <template>
   <loading v-if="loading" />
-  <div class="content" v-else v-html="content" />
+  <div class="content" v-else>
+    <content-parser :content="content" :lang="lang" />
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent, PropType } from "vue";
 import { Article, useArticle } from "@/composition/article";
 import Loading from "@/views/main/Loading.vue";
+import ContentParser from "@/components/article/ContentParser.vue";
 
 export default defineComponent({
   name: "ArticleContent",
-  components: { Loading },
+  components: { ContentParser, Loading },
   props: {
     lang: { type: String, required: true },
     article: { type: Object as PropType<Article>, required: true },
@@ -44,6 +47,9 @@ export default defineComponent({
 .content {
   :deep(h1) {
     font-size: 2rem;
+  }
+  :deep(a) {
+    color: blue;
   }
 }
 </style>

@@ -3,6 +3,8 @@ from bolinette import blnt, core
 from bolinette.decorators import service
 from bolinette.exceptions import NotFoundError
 
+from register.parser import LinkExtension, ArticleProcessor
+
 
 @service('page')
 class PageService(core.Service):
@@ -34,5 +36,8 @@ class PageService(core.Service):
                                                          current_user=current_user)
         return page
 
-    async def get_parsed_content(self, page):
-        return markdown.markdown(page.last_version.content)
+    async def get_parsed_content(self, page, lang: str):
+        processor = ArticleProcessor(self.context, lang)
+        html = markdown.markdown(page.last_version.content, extensions=[LinkExtension()])
+        processed = await processor.process(html)
+        return processed

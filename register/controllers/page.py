@@ -62,7 +62,7 @@ class PageController(web.Controller):
         language = await self.language_service.get_by_name(match['lang'])
         article = await self.article_service.get_by_key(match['article'])
         page = await self.page_service.get_one_by_article_language(article, language)
-        return self.response.ok(data=await self.page_service.get_parsed_content(page))
+        return self.response.ok(data=await self.page_service.get_parsed_content(page, language.name))
 
     @patch('/{lang}/{article}', middlewares=['auth|roles=creator'],
            expects=web.Expects('page', 'new', patch=True), returns=web.Returns('page', 'complete'))

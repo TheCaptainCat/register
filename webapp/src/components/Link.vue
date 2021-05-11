@@ -1,7 +1,10 @@
 <template>
-  <router-link :to="to" class="in-link">
+  <router-link v-if="to" :to="to" class="in-link">
     <slot />
   </router-link>
+  <a disabled v-else class="in-link error">
+    <slot />
+  </a>
 </template>
 
 <script lang="ts">
@@ -12,7 +15,7 @@ export default defineComponent({
   props: {
     to: {
       type: Object,
-      required: true,
+      required: false,
     },
   },
 });
@@ -21,5 +24,8 @@ export default defineComponent({
 <style lang="scss" scoped>
 .in-link {
   color: blue;
+  &.error {
+    color: red;
+  }
 }
 </style>

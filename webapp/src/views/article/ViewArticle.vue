@@ -249,6 +249,9 @@ export default defineComponent({
       this.i18n.changeLocale(value);
       this.fetchArticle();
     },
+    articleKey() {
+      this.fetchArticle();
+    },
   },
 });
 
